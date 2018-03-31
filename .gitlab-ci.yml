@@ -1,0 +1,12 @@
+deploy_production:
+  stage: deploy
+  script:
+    - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/text-giving.git
+    - git push heroku master
+    - echo "Deployed to production server"
+  environment:
+  name: production
+  url: https://text-giving.herokuapp.com/
+  when: manual
+  only:
+    - master
