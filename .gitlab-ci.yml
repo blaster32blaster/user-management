@@ -1,6 +1,13 @@
 deploy_production:
   stage: deploy
+  before_script:
+      - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+      - mkdir -p ~/.ssh
+      - eval $(ssh-agent -s)
+      - '[[ -f /.dockerenv ]] && echo -e "Host *ntStrictHostKeyChecking nonn" > ~/.ssh/config'
+      - ssh-add <(echo "$SSH_PRIVATE_KEY")
   script:
+    ssh -p22 deployer@107.170.53.95
     git config --global user.name "Gitlab Deploy"
     git config --global user.email "olaf@webnician.net"
     git remote add deploys deployer@107.170.53.95:/var/repo/usermanagement.git
