@@ -1,15 +1,18 @@
 deploy_production:
   stage: deploy
   before_script:
-      - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+#      - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
       - mkdir -p ~/.ssh
-      - eval $(ssh-agent -s)
-      - ssh-add <(echo "$SSH_PRIVATE_KEY2")
+      - echo -e "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+      - chmod 600 ~/.ssh/id_rsa
+#      - eval $(ssh-agent -s)
+#      - ssh-add <(echo "$SSH_PRIVATE_KEY2")
   script:
-    gitlab-shared-runners-manager-3.gitlab.com --debug run
-    ssh -p22 deployer@107.170.53.95
-    git config --global user.name "Gitlab Deploy"
-    git config --global user.email "olaf@webnician.net"
+
+    - ssh deployer@107.170.53.95
+#    ssh -p22 deployer@107.170.53.95
+#    git config --global user.name "Gitlab Deploy"
+#    git config --global user.email "olaf@webnician.net"
     git remote add deploys deployer@107.170.53.95:/var/repo/usermanagement.git
     git add .
     git commit -m "Deploy"
