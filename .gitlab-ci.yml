@@ -3,7 +3,7 @@ deploy_production:
   script:
     git config --global user.name "Gitlab Deploy"
     git config --global user.email "olaf@webnician.net"
-    git remote add deploys git@107.170.53.95:/var/repo/usermanagement.git
+    git remote add deploys deployer@107.170.53.95:/var/repo/usermanagement.git
     git add .
     git commit -m "Deploy"
     git push --force deploys master
