@@ -6,8 +6,7 @@ deploy_production:
       - eval $(ssh-agent -s)
       - ssh-add <(echo "$SSH_PRIVATE_KEY2")
   script:
-  /usr/bin/gitlab-ci-multi-runner --debug run --working-directory /home/gitlab-runner \
-     --config /etc/gitlab-runner/config.toml --service gitlab-runner --user gitlab-runner
+    gitlab-runner --debug run
     ssh -p22 deployer@107.170.53.95
     git config --global user.name "Gitlab Deploy"
     git config --global user.email "olaf@webnician.net"
