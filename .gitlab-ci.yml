@@ -9,8 +9,6 @@ deploy_production:
     git push --force deploys master
     - echo "Deployed to production server"
   environment:
-  name: production
-  url: http://backend.evenz.online/
   when: manual
   only:
     - master
