@@ -4,7 +4,7 @@ deploy_production:
       - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
       - mkdir -p ~/.ssh
       - eval $(ssh-agent -s)
-      - ssh-add <(echo "$SSH_PRIVATE_KEY")
+      - ssh-add <(echo "$SSH_PRIVATE_KEY2")
   script:
     ssh -p22 deployer@107.170.53.95
     git config --global user.name "Gitlab Deploy"
