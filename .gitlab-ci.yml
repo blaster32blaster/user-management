@@ -4,7 +4,6 @@ deploy_production:
       - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
       - mkdir -p ~/.ssh
       - eval $(ssh-agent -s)
-      - '[[ -f /.dockerenv ]] && echo -e "Host *ntStrictHostKeyChecking nonn" > ~/.ssh/config'
       - ssh-add <(echo "$SSH_PRIVATE_KEY")
   script:
     ssh -p22 deployer@107.170.53.95
