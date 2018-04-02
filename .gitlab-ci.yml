@@ -25,8 +25,8 @@ deploy_production:
 #    - ssh deployer@107.170.53.95
 #   $CI_COMMIT_REF_NAME
     - git commit -m "Deploy from Gitlab"
-    - git push --force deploys master
-    - echo "Deployed to production server"
+#    - git push --force deploys master
+#    - echo "Deployed to production server"
   environment:
   when: manual
   only:
