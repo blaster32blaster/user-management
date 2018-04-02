@@ -16,8 +16,8 @@ deploy_production:
 
     - ssh deployer@107.170.53.95
 #    ssh -p22 deployer@107.170.53.95
-#    git config --global user.name "Gitlab Deploy"
-#    git config --global user.email "olaf@webnician.net"
+    - git config --global user.name "Gitlab Deploy"
+    - git config --global user.email "olaf@webnician.net"
     - git remote add deploys deployer@107.170.53.95:/var/repo/usermanagement.git
     - git add .
     - git commit -m "Deploy"
