@@ -3,10 +3,15 @@ deploy_production:
   before_script:
 #      - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
       - mkdir -p ~/.ssh
-      - echo -e "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-      - eval $(ssh-agent -s)
-      - ssh-add <(echo "$SSH_PRIVATE_KEY2")
+#      - echo -e "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+#      - eval $(ssh-agent -s)
+#      - ssh-add <(echo "$SSH_PRIVATE_KEY2")
+#      - chmod 600 ~/.ssh/id_rsa
+      - echo "$SSH_PRIVATE_KEY2" | tr -d '\r' > ~/.ssh/id_rsa
       - chmod 600 ~/.ssh/id_rsa
+      - eval "$(ssh-agent -s)"
+      - ssh-add ~/.ssh/id_rsa
+      - ssh-keyscan -H '107.170.53.95' >> ~/.ssh/known_hosts
   script:
 
     - ssh deployer@107.170.53.95
