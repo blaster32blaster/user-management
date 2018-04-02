@@ -19,6 +19,7 @@ deploy_production:
     - git config --global user.email "olaf@webnician.net"
     - git checkout $CI_COMMIT_REF_NAME
     - git remote add deploys deployer@107.170.53.95:/var/repo/usermanagement.git
+    - git branch -u deploys/master
     - git add .
 #    - ssh deployer@107.170.53.95
 #   $CI_COMMIT_REF_NAME
