@@ -1,20 +1,13 @@
 deploy_production:
   stage: deploy
   before_script:
-#      - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
       - mkdir -p ~/.ssh
-#      - echo -e "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-#      - eval $(ssh-agent -s)
-#      - ssh-add <(echo "$SSH_PRIVATE_KEY2")
-#      - chmod 600 ~/.ssh/id_rsa
       - echo "$SSH_PRIVATE_KEY2" | tr -d '\r' > ~/.ssh/id_rsa
       - chmod 600 ~/.ssh/id_rsa
       - eval "$(ssh-agent -s)"
       - ssh-add ~/.ssh/id_rsa
       - ssh-keyscan -H '107.170.53.95' >> ~/.ssh/known_hosts
   script:
-
-#    ssh -p22 deployer@107.170.53.95
     - git config --global user.name "Gitlab Deploy"
     - git config --global user.email "olaf@webnician.net"
     - git checkout $CI_COMMIT_REF_NAME
@@ -22,11 +15,7 @@ deploy_production:
     - git fetch deploys
     - git branch -u deploys/master
     - git add .
-#    - ssh deployer@107.170.53.95
-#   $CI_COMMIT_REF_NAME
-#    - git commit -m "Deploy from Gitlab"
     - git push --force deploys master
-#    - echo "Deployed to production server"
   environment:
   when: manual
   only:
