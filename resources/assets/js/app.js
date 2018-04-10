@@ -16,6 +16,9 @@ window.Vue = require('vue');
  */
 
 Vue.component('example-component', require('./components/ExampleComponent.vue'));
+Vue.component('auth-clients', require('./components/passport/AuthorizedClients.vue'));
+Vue.component('clients', require('./components/passport/Clients.vue'));
+Vue.component('access-tokens', require('./components/passport/PersonalAccessTokens.vue'));
 
 const app = new Vue({
     el: '#app'

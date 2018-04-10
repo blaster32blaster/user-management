@@ -13,6 +13,27 @@ use Illuminate\Http\Request;
 |
 */
 
+Route::post('/login','ApiController@accessToken');
+
+Route::get('/redirect', function () {
+    $query = http_build_query([
+        'client_id' => '6',
+        'redirect_uri' => 'http://localhost:8080',
+        'response_type' => 'code',
+        'scope' => '',
+    ]);
+
+    return redirect('http://user.management.local/oauth/authorize?'.$query);
+});
+
+Route::group(['middleware' => ['web','auth:api']], function()
+
+{
+
+
+});
+
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
