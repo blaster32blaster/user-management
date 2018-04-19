@@ -13,18 +13,12 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::post('/login','ApiController@accessToken');
+//Route::post('/login','ApiController@accessToken');
 
-Route::get('/redirect', function () {
-    $query = http_build_query([
-        'client_id' => '6',
-        'redirect_uri' => 'http://localhost:8080',
-        'response_type' => 'code',
-        'scope' => '',
-    ]);
+Route::group(['prefix' => 'oauth-proxy'], function () {
+        Route::post('password', 'ApiController@passwordGrantProxy');
+    });
 
-    return redirect('http://user.management.local/oauth/authorize?'.$query);
-});
 
 Route::group(['middleware' => ['web','auth:api']], function()
 
