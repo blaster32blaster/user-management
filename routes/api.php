@@ -13,6 +13,21 @@ use Illuminate\Http\Request;
 |
 */
 
+//Route::post('/login','ApiController@accessToken');
+
+Route::group(['prefix' => 'oauth-proxy'], function () {
+        Route::post('password', 'ApiController@passwordGrantProxy');
+    });
+
+
+Route::group(['middleware' => ['web','auth:api']], function()
+
+{
+
+
+});
+
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
