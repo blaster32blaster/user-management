@@ -68,24 +68,8 @@ class ApiController extends Controller
             ->issueToken($request->withParsedBody(array_merge(
                 $args,
                 $client)));
-//        $parsed = json_decode($tokens->getContent());
-        return $tokens;
+        $parsed = json_decode($tokens->getContent());
+        return response(json_encode(['token' => $parsed->access_token]));
 
-//        $args = [
-//                'username' => $request->getParsedBody()['username'],
-//                'password' => $request->getParsedBody()['password']
-//            ];
-//
-//            $client = config('acceptedoauthclients.http://localhost:8080/');
-//        $tokens =  app(AccessTokenController::class)
-//            ->issueToken($request->withParsedBody(array_merge(
-//                $args,
-//                $client)));
-//        $resp = json_decode($tokens->getContent());
-//        dd($resp->expires_in);
-//        $cookie_expiry = Carbon::now()->addSeconds($parsed->expires_in);
-////        $cookie = cookie('refresher_token', $cookie_expiry);
-//        $cookie = setcookie('refreshes_token', $parsed->refresh_token, $cookie_expiry);
-//        return $cookie;
     }
 }
