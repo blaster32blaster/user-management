@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\ApiController;
+use App\Services\SocialAccountService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Config;
 use Laravel\Socialite\Facades\Socialite;
+use Psr\Http\Message\ServerRequestInterface;
 
 class SocialAccountController extends Controller
 {
@@ -20,23 +24,43 @@ class SocialAccountController extends Controller
         $headers = $request->headers->all();
         $referrer = $headers['referer'][0];
 
-        if (config('acceptedoauthclients.'. $referrer)) {
-//            @todo : the with method isnt working here
-            return Socialite::driver($provider)
-                ->with(['calling_app' => $referrer])
-                ->redirect();
+        if ($referrer || !empty($referrer)) {
+            session(['referrer' => $referrer]);
 
+        if ($provider === 'twitter') {
+            if (config('acceptedoauthclients.' . $referrer)) {
+//            @todo : need to work out how to set the redirect location
+                $socialite = Socialite::driver($provider)->redirect();
+                return $socialite;
+//                return $socialite->with(['hd' => 'example.com']);
+            }
+        } else {
+            if (config('acceptedoauthclients.' . $referrer)) {
+//            @todo : the with method isnt working here
+                return Socialite::driver($provider)
+                    ->with(['hd' => 'example.com'])->redirect();
+            }
+        }
+        return response(' Not Authorized', 403);
         }
     }
 
     /**
-     * @param \App\SocialAccountsService $accountService
+     * @param SocialAccountService $accountService
      * @param $provider
+     * @param ServerRequestInterface $req
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function handleProviderCallbackApi(\App\SocialAccountsService $accountService, $provider)
+    public function handleProviderCallbackApi(SocialAccountService $accountService, $provider, ServerRequestInterface $req)
     {
-//        #todo : this needs to be built out and tested
+        $referrer = session('referrer');
+
+        if (!$referrer) {
+            return redirect()->to('/home');
+        }
+
+        session()->forget('referrer');
+
         try {
             $user = Socialite::with($provider)->user();
         } catch (\Exception $e) {
@@ -48,9 +72,20 @@ class SocialAccountController extends Controller
             $provider
         );
 
+        $apiController = app(ApiController::class);
+
+        $tokens = $apiController
+            ->oauthProviderGrantProxy($req->withParsedBody(
+                [
+                    'username' => $authUser->name,
+                    'password' => $authUser->password
+                ]), $referrer);
+
+//        @todo : this needs to be replaced with token issuance
+
         auth()->login($authUser, true);
 
-        return redirect()->to('/home');
+
     }
 
     /**
@@ -65,8 +100,11 @@ class SocialAccountController extends Controller
 
     /**
      * Obtain the user information
+     * @param SocialAccountService $accountService
+     * @param $provider
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function handleProviderCallback(\App\SocialAccountsService $accountService, $provider)
+    public function handleProviderCallback(SocialAccountService $accountService, $provider)
     {
 
         try {

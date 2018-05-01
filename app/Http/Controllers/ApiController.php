@@ -100,6 +100,44 @@ class ApiController extends Controller
 
     }
 
+    public function oauthProviderGrantProxy(ServerRequestInterface $request, $referring_application)
+    {
+        // fetch the referrer, whitelisting
+        $referer = $referring_application;
+        $args = [];
+
+        // set the default client information
+        $client = config('acceptedoauthclients.'. $referer)
+            ? config('acceptedoauthclients.'. $referer)
+            : '';
+
+        //this is for granting new access/refresh tokens
+        if (isset($request->getParsedBody()['username']) && isset($request->getParsedBody()['password'])) {
+            $args = [
+                'username' => $request->getParsedBody()['username'],
+                'password' => 'A#357bfG'
+            ];
+        }
+
+        //fetch the tokens
+        $tokens =  app(AccessTokenController::class)
+            ->issueToken($request->withParsedBody(array_merge(
+                $args,
+                $client)));
+
+        //parse out the body containing tokens and expiry
+        $parsed = json_decode($tokens->getContent());
+
+        dd($parsed);
+
+        //return just the refresh token
+        return response(json_encode([
+            'refresh_token' => $parsed->refresh_token,
+            'access_token' => $parsed->access_token,
+            'token_expiry' => $parsed->expires_in]));
+
+    }
+
     public function authorizationProxy(ServerRequestInterface $request)
     {
         $access_token = $request->getServerParams()['HTTP_AUTHORIZATION'];

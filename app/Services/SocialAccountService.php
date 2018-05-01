@@ -1,7 +1,9 @@
 <?php
 
-namespace App;
+namespace App\Services;
 
+use App\LinkedSocialAccount;
+use App\User;
 use Laravel\Socialite\Contracts\User as ProviderUser;
 
 class SocialAccountService
@@ -22,6 +24,7 @@ class SocialAccountService
                 $user = User::create([
                     'email' => $providerUser->getEmail(),
                     'name'  => $providerUser->getName(),
+                    'password' => bcrypt('A#357bfG'),
                 ]);
             }
 
