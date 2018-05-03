@@ -64,7 +64,7 @@ class SocialAccountController extends Controller
         try {
             $user = Socialite::with($provider)->user();
         } catch (\Exception $e) {
-            return redirect('/login');
+            return redirect($referrer);
         }
 
         $authUser = $accountService->findOrCreate(
@@ -74,16 +74,9 @@ class SocialAccountController extends Controller
 
         $apiController = app(ApiController::class);
 
-        $tokens = $apiController
-            ->oauthProviderGrantProxy($req->withParsedBody(
-                [
-                    'username' => $authUser->name,
-                    'password' => $authUser->password
-                ]), $referrer);
+        $accessToken = $authUser->createToken($referrer)->accessToken;
 
-//        @todo : this needs to be replaced with token issuance
-
-        auth()->login($authUser, true);
+        return redirect($referrer . '?access_token=' . $accessToken);
 
 
     }
