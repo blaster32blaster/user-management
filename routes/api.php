@@ -17,7 +17,14 @@ use Illuminate\Http\Request;
 
 Route::group(['prefix' => 'oauth-proxy'], function () {
         Route::post('password', 'ApiController@passwordGrantProxy');
-    });
+
+        Route::get('authorization', 'ApiController@authorizationProxy');
+
+    Route::get('login/{provider}', 'Auth\SocialAccountController@redirectToProviderApi');
+
+    Route::get('login/{provider}/callback', 'Auth\SocialAccountController@handleProviderCallbackApi');
+
+});
 
 
 Route::group(['middleware' => ['web','auth:api']], function()

@@ -35,4 +35,15 @@ return [
         'secret' => env('STRIPE_SECRET'),
     ],
 
+    'github' => [
+        'client_id' => env('GITHUB_ID'),         // Your GitHub Client ID
+        'client_secret' => env('GITHUB_SECRET'), // Your GitHub Client Secret
+        'redirect' => 'GITHUB_URL',
+    ],
+
+    'twitter' => [
+        'client_id' => env('TWITTER_ID'), // Your GitHub Client ID
+        'client_secret' => env('TWITTER_SECRET'), // Your GitHub Client Secret
+        'redirect' => env('TWITTER_URL'),
+    ],
 ];
