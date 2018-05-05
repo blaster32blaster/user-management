@@ -29,10 +29,8 @@ class SocialAccountController extends Controller
 
         if ($provider === 'twitter') {
             if (config('acceptedoauthclients.' . $referrer)) {
-//            @todo : need to work out how to set the redirect location
                 $socialite = Socialite::driver($provider)->redirect();
                 return $socialite;
-//                return $socialite->with(['hd' => 'example.com']);
             }
         } else {
             if (config('acceptedoauthclients.' . $referrer)) {
@@ -72,13 +70,9 @@ class SocialAccountController extends Controller
             $provider
         );
 
-        $apiController = app(ApiController::class);
-
         $accessToken = $authUser->createToken($referrer)->accessToken;
 
         return redirect($referrer . '?access_token=' . $accessToken);
-
-
     }
 
     /**

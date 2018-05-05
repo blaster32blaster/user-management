@@ -24,7 +24,7 @@ class SocialAccountService
                 $user = User::create([
                     'email' => $providerUser->getEmail(),
                     'name'  => $providerUser->getName(),
-                    'password' => bcrypt('A#357bfG'),
+                    'password' => bcrypt(''),
                 ]);
             }
 
