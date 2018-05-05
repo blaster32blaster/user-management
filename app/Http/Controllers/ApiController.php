@@ -21,37 +21,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class ApiController extends Controller
 {
-
-//    public function accessToken(LoginRequest $request)
-//    {
-//        $user = User::where("email", $request->email)->first();
-//
-//        if ($user) {
-//
-//            if (Hash::check($request->password, $user->password)) {
-////                $refreshToken = $user->createToken('Todo App')->refreshToken;
-//                return $this->prepareResult(true, ["accessToken" => $user->createToken('Test Application')->accessToken], [], "User Verified");
-//
-//            } else {
-//
-//                return $this->prepareResult(false, [], ["password" => "Wrong passowrd"], "Password not matched");
-//
-//            }
-//
-//        } else {
-//
-//            return $this->prepareResult(false, [], ["email" => "Unable to find user"], "User not found");
-//        }
-//    }
-
-//    private function prepareResult($status, $data, $errors, $msg)
-//
-//    {
-//
-//        return ['status' => $status, 'data' => $data, 'message' => $msg, 'errors' => $errors];
-//
-//    }
-
     /**
      * @param ServerRequestInterface $request
      * @return mixed
@@ -91,44 +60,6 @@ class ApiController extends Controller
 
         //parse out the body containing tokens and expiry
         $parsed = json_decode($tokens->getContent());
-
-        //return just the refresh token
-        return response(json_encode([
-            'refresh_token' => $parsed->refresh_token,
-            'access_token' => $parsed->access_token,
-            'token_expiry' => $parsed->expires_in]));
-
-    }
-
-    public function oauthProviderGrantProxy(ServerRequestInterface $request, $referring_application)
-    {
-        // fetch the referrer, whitelisting
-        $referer = $referring_application;
-        $args = [];
-
-        // set the default client information
-        $client = config('acceptedoauthclients.'. $referer)
-            ? config('acceptedoauthclients.'. $referer)
-            : '';
-
-        //this is for granting new access/refresh tokens
-        if (isset($request->getParsedBody()['username']) && isset($request->getParsedBody()['password'])) {
-            $args = [
-                'username' => $request->getParsedBody()['username'],
-                'password' => 'A#357bfG'
-            ];
-        }
-
-        //fetch the tokens
-        $tokens =  app(AccessTokenController::class)
-            ->issueToken($request->withParsedBody(array_merge(
-                $args,
-                $client)));
-
-        //parse out the body containing tokens and expiry
-        $parsed = json_decode($tokens->getContent());
-
-        dd($parsed);
 
         //return just the refresh token
         return response(json_encode([
