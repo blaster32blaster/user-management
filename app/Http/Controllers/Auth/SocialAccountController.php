@@ -34,9 +34,8 @@ class SocialAccountController extends Controller
             }
         } else {
             if (config('acceptedoauthclients.' . $referrer)) {
-//            @todo : the with method isnt working here
-                return Socialite::driver($provider)
-                    ->with(['hd' => 'example.com'])->redirect();
+                $socialite = Socialite::driver($provider)->redirect();
+                return $socialite;
             }
         }
         return response(' Not Authorized', 403);
