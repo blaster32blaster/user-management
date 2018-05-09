@@ -38,12 +38,24 @@ return [
     'github' => [
         'client_id' => env('GITHUB_ID'),         // Your GitHub Client ID
         'client_secret' => env('GITHUB_SECRET'), // Your GitHub Client Secret
-        'redirect' => 'GITHUB_URL',
+        'redirect' => env('GITHUB_URL'),
     ],
 
     'twitter' => [
         'client_id' => env('TWITTER_ID'), // Your GitHub Client ID
         'client_secret' => env('TWITTER_SECRET'), // Your GitHub Client Secret
         'redirect' => env('TWITTER_URL'),
+    ],
+
+    'facebook' => [
+        'client_id' => env('FACEBOOK_ID'), // Your GitHub Client ID
+        'client_secret' => env('FACEBOOK_SECRET'), // Your GitHub Client Secret
+        'redirect' => env('FACEBOOK_URL'),
+    ],
+
+    'google' => [
+        'client_id' => env('GOOGLE_ID'), // Your GitHub Client ID
+        'client_secret' => env('GOOGLE_SECRET'), // Your GitHub Client Secret
+        'redirect' => env('GOOGLE_URL'),
     ],
 ];

@@ -79,8 +79,9 @@ class ApiController extends Controller
         ];
 
         $client = new Client();
+        $url = env('APP_URL') . '/api/user';
         $response = $client
-            ->request('GET', 'http://user.management.local/api/user', [
+            ->request('GET', $url, [
                 'headers' => $headers
             ])->getBody()->getContents();
 
