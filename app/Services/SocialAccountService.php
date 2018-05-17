@@ -10,6 +10,7 @@ class SocialAccountService
 {
     public function findOrCreate(ProviderUser $providerUser, $provider)
     {
+        $providerToken = $providerUser->token;
         $account = LinkedSocialAccount::where('provider_name', $provider)
             ->where('provider_id', $providerUser->getId())
             ->first();
@@ -31,6 +32,7 @@ class SocialAccountService
             $user->accounts()->create([
                 'provider_id'   => $providerUser->getId(),
                 'provider_name' => $provider,
+                'provider_token' => $providerToken
             ]);
 
             return $user;

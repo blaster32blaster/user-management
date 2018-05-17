@@ -4,10 +4,17 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\ApiController;
 use App\Services\SocialAccountService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Config;
+use Laravel\Passport\Bridge\AccessTokenRepository;
+use Laravel\Passport\Client;
+use Laravel\Passport\PersonalAccessTokenFactory;
+use Laravel\Passport\TokenRepository;
 use Laravel\Socialite\Facades\Socialite;
+use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class SocialAccountController extends Controller
@@ -69,9 +76,17 @@ class SocialAccountController extends Controller
             $provider
         );
 
-        $accessToken = $authUser->createToken($referrer)->accessToken;
+        $createdToken = $authUser->createToken($referrer);
+        $token = $createdToken->token;
+        $token->expires_at =
+            Carbon::now()->addDays('1');
+        $token->name = $provider;
 
-        return redirect($referrer . '?access_token=' . $accessToken);
+        $token->save();
+
+        return redirect($referrer .
+            '?access_token=' . $createdToken->accessToken .
+            '&provider=' . $provider);
     }
 
     /**

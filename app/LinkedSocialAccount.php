@@ -10,7 +10,8 @@ class LinkedSocialAccount extends Model
     protected $fillable =
         [
             'provider_name',
-            'provider_id'
+            'provider_id',
+            'provider_token'
         ];
 
     public function user()
