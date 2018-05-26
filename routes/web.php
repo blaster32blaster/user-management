@@ -11,6 +11,8 @@
 |
 */
 
+use Illuminate\Http\Request;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -23,5 +25,6 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('login/{provider}', 'Auth\SocialAccountController@redirectToProviderApi');
+Route::get('login/{provider}', 'Auth\SocialAccountController@redirectToProviderApi')->name('oauth-login');
 Route::get('login/{provider}/callback', 'Auth\SocialAccountController@handleProviderCallbackApi');
+

@@ -11,7 +11,8 @@ class LinkedSocialAccount extends Model
         [
             'provider_name',
             'provider_id',
-            'provider_token'
+            'provider_token',
+            'token_secret'
         ];
 
     public function user()

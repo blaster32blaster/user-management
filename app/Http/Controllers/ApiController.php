@@ -8,6 +8,9 @@ use App\Services\OauthService;
 use App\User;
 use Carbon\Carbon;
 use function GuzzleHttp\Promise\queue;
+use HttpException;
+use HttpRequest;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Auth;
@@ -19,8 +22,11 @@ use Laravel\Passport\Bridge\AccessToken;
 use Laravel\Passport\Bridge\RefreshToken;
 use Laravel\Passport\Bridge\RefreshTokenRepository;
 use Laravel\Passport\Client;
+use Laravel\Passport\Guards\TokenGuard;
 use Laravel\Passport\Http\Controllers\AccessTokenController;
 use Laravel\Passport\Http\Controllers\AuthorizationController;
+use Laravel\Passport\PassportServiceProvider;
+use Laravel\Passport\Token;
 use Laravel\Socialite\Facades\Socialite;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -30,6 +36,19 @@ class ApiController extends Controller
      * @var OauthService
      */
     public $oauthServices;
+
+    protected $app;
+
+    /**
+     * Constructor
+     *
+     * @param Application $app        The app instance.
+     * @return void
+     */
+    public function __construct(Application $app)
+    {
+        $this->app = $app;
+    }
 
     /**
      * @param ServerRequestInterface $request
@@ -54,6 +73,7 @@ class ApiController extends Controller
                 ];
             $client['grant_type'] = "refresh_token";
         }
+
         //this is for granting new access/refresh tokens
         if (isset($request->getParsedBody()['username']) && isset($request->getParsedBody()['password'])) {
             $args = [
@@ -119,22 +139,23 @@ class ApiController extends Controller
             }
         }
 
+        // make a request to the external oauth provider to ensure account is good
         if (!$this->oauthServices->internal) {
-            return response(json_encode($this->oauthServices->makeExternalOauthRequest()));
+
+//            return response(json_encode($this->oauthServices->makeExternalOauthRequest()));
+
             if (!$this->oauthServices->makeExternalOauthRequest()) {
-                return response(json_encode(false));
+
+//                return response((json_encode($this->oauthServices->renewOauthConnection())));
+
+                if (!$this->oauthServices->renewOauthConnection()) {
+                    return response(json_encode('renew'), 202);
+                }
             }
             return response(json_encode(true));
         }
 
-        return response(json_encode('asdasd'));
+        return response(json_encode(false));
     }
 
-    public function checkOauthProviderToken($data)
-    {
-        $user = User::find($data->id);
-        $token = $user->token();
-        return true;
-//        @todo : we need to do an http call out to the provider here
-    }
 }

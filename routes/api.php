@@ -26,14 +26,15 @@ Route::group(['prefix' => 'oauth-proxy'], function () {
 
 });
 
-
 Route::group(['middleware' => ['web','auth:api']], function()
 
 {
 
-
 });
 
+Route::get('/here', function (Request $request) {
+    return 'here';
+});
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

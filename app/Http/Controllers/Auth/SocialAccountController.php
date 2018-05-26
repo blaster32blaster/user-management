@@ -2,23 +2,22 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\ApiController;
-use App\Services\SocialAccountService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Config;
-use Laravel\Passport\Bridge\AccessTokenRepository;
-use Laravel\Passport\Client;
-use Laravel\Passport\PersonalAccessTokenFactory;
-use Laravel\Passport\TokenRepository;
+use App\Services\SocialAccountService;
 use Laravel\Socialite\Facades\Socialite;
-use League\OAuth2\Server\Entities\ClientEntityInterface;
-use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class SocialAccountController extends Controller
 {
+    protected $headers;
+
+    protected $referer = '';
+
+    protected $returnEnvironment;
+
+    protected $callback;
     /**
      * Redirect the user to the Social authentication page.
      *
@@ -28,25 +27,28 @@ class SocialAccountController extends Controller
      */
     public function redirectToProviderApi($provider, Request $request)
     {
-        $headers = $request->headers->all();
-        $referrer = $headers['referer'][0];
+        //set headers
+        $this->headers = $request->headers->all();
 
-        if ($referrer || !empty($referrer)) {
-            session(['referrer' => $referrer]);
+        //check callback to set local
+        if (!$this->checkCallback()) {
+            return response(' Bad Referrer', 403);
+        }
 
-        if ($provider === 'twitter') {
-            if (config('acceptedoauthclients.' . $referrer)) {
-                $socialite = Socialite::driver($provider)->redirect();
-                return $socialite;
-            }
-        } else {
-            if (config('acceptedoauthclients.' . $referrer)) {
-                $socialite = Socialite::driver($provider)->redirect();
-                return $socialite;
-            }
+        //check referer, is it a local request?
+        if (!$this->checkReferer()) {
+            return response(' Bad Referrer', 403);
         }
-        return response(' Not Authorized', 403);
-        }
+
+//        almost got this, need to get this redirecting if from local
+
+            session(['referrer' => $this->referer]);
+
+                $socialite = Socialite::driver($provider)->redirect();
+                if ($socialite) {
+                    return $socialite;
+                }
+        return response(' Bad Referrer', 403);
     }
 
     /**
@@ -122,5 +124,52 @@ class SocialAccountController extends Controller
         auth()->login($authUser, true);
 
         return redirect()->to('/home');
+    }
+
+    private function checkReferer()
+    {
+        // check if set
+        if (!$this->headers['referer'][0] || empty($this->headers['referer'][0])) {
+            return false;
+        }
+        $referrer = $this->headers['referer'][0];
+
+        //check if we have a query string
+        if (strpos($referrer, '?') !== 0) {
+            $referrer = strtok($referrer, '?');
+        }
+
+        // check if the referer is local
+        if ($this->returnEnvironment === 'local') {
+            $this->referer = $referrer;
+            return true;
+        }
+
+        //check accepted clients
+        if ($this->returnEnvironment === 'client') {
+            if (config('acceptedoauthclients.' . $referrer)) {
+                $this->referer = $referrer;
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    private function checkCallback()
+    {
+        //check if set
+        if (!isset($this->headers['callback'][0])) {
+            $this->returnEnvironment = 'client';
+            return true;
+        }
+
+        //check if local
+        if ($this->headers['callback'][0] === config('acceptedoauthclients.thisUrl')) {
+            $this->callback = $this->headers['callback'][0];
+            $this->returnEnvironment = 'local';
+            return true;
+        }
+        return false;
     }
 }
