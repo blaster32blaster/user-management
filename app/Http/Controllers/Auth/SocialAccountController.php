@@ -40,8 +40,6 @@ class SocialAccountController extends Controller
             return response(' Bad Referrer', 403);
         }
 
-//        almost got this, need to get this redirecting if from local
-
             session(['referrer' => $this->referer]);
 
                 $socialite = Socialite::driver($provider)->redirect();

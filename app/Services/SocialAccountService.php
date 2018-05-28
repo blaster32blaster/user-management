@@ -13,7 +13,7 @@ class SocialAccountService
         $providerToken = $providerUser->token;
         $tokenSecret = '';
 
-        if ($providerUser->tokenSecret) {
+        if (isset($providerUser->tokenSecret)) {
             $tokenSecret = $providerUser->tokenSecret;
         }
 
