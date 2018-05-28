@@ -153,7 +153,7 @@ class SocialAccountController extends Controller
                 $this->referer = $referrer;
                 return true;
             }
-            logger()->error(config('acceptedoauthclients.' . $referrer));
+            logger()->error(json_encode(config('acceptedoauthclients.' . $referrer)));
             logger()->error(json_encode($referrer));
             logger()->error('Client and not found');
             return false;
