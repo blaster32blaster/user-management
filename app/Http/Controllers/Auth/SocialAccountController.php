@@ -131,6 +131,7 @@ class SocialAccountController extends Controller
     {
         // check if set
         if (!$this->headers['referer'][0] || empty($this->headers['referer'][0])) {
+            logger()->error('Referrer Empty');
             return false;
         }
         $referrer = $this->headers['referer'][0];
@@ -152,8 +153,10 @@ class SocialAccountController extends Controller
                 $this->referer = $referrer;
                 return true;
             }
+            logger()->error('Client and not found');
             return false;
         }
+        logger()->error('Local and not true');
         return false;
     }
 
