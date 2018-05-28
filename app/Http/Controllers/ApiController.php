@@ -82,21 +82,26 @@ class ApiController extends Controller
             ];
         }
 
-        //fetch the tokens
-        $tokens =  app(AccessTokenController::class)
-            ->issueToken($request->withParsedBody(array_merge(
-                $args,
-                $client)));
+        try {
+            //fetch the tokens
+            $tokens = app(AccessTokenController::class)
+                ->issueToken($request->withParsedBody(array_merge(
+                    $args,
+                    $client)));
 
-        //parse out the body containing tokens and expiry
-        $parsed = json_decode($tokens->getContent());
+            //parse out the body containing tokens and expiry
+            $parsed = json_decode($tokens->getContent());
 
-        //return just the refresh token
-        return response(json_encode([
-            'refresh_token' => $parsed->refresh_token,
-            'access_token' => $parsed->access_token,
-            'token_expiry' => $parsed->expires_in]));
-
+            //return just the refresh token
+            return response(json_encode([
+                'refresh_token' => $parsed->refresh_token,
+                'access_token' => $parsed->access_token,
+                'token_expiry' => $parsed->expires_in]));
+        } catch (\Exception $e) {
+            return response(json_encode(
+                'Not Authorized'
+            ), 403);
+        }
     }
 
     public function authorizationProxy(ServerRequestInterface $request)
