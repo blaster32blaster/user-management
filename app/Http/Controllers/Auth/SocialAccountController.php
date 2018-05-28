@@ -32,11 +32,13 @@ class SocialAccountController extends Controller
 
         //check callback to set local
         if (!$this->checkCallback()) {
+            logger()->error('Failed Callback Check');
             return response(' Bad Referrer', 403);
         }
 
         //check referer, is it a local request?
         if (!$this->checkReferer()) {
+            logger()->error('Failed Referrer Check');
             return response(' Bad Referrer', 403);
         }
 
@@ -46,6 +48,7 @@ class SocialAccountController extends Controller
                 if ($socialite) {
                     return $socialite;
                 }
+        logger()->error('Failed Social Check');
         return response(' Bad Referrer', 403);
     }
 
