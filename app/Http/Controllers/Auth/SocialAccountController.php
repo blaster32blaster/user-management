@@ -149,19 +149,20 @@ class SocialAccountController extends Controller
 
         //check accepted clients
         if ($this->returnEnvironment === 'client') {
-            if (config('acceptedoauthclients.' . $referrer)) {
-                $this->referer = $referrer;
-                return true;
-            }
-//            $ref = config('acceptedoauthclients.'. $referrer)
-//                ? config('acceptedoauthclients.'. $referrer)
-//                : null;
-//
-//            if ($ref !== null) {
+//            if (config('acceptedoauthclients.' . $referrer)) {
 //                $this->referer = $referrer;
-//                logger()->error(json_encode($this->referer));
 //                return true;
 //            }
+            $ref = config('acceptedoauthclients.'. $referrer)
+                ? config('acceptedoauthclients.'. $referrer)
+                : null;
+
+            if ($ref !== null) {
+                $this->referer = $referrer;
+                logger()->error(json_encode($this->referer));
+                return true;
+            }
+            logger()->error(json_encode(env('APP_ENV')));
             logger()->error(json_encode(config('acceptedoauthclients.http://evenz.online')));
             logger()->error(json_encode(config('acceptedoauthclients.' . $referrer)));
             logger()->error($referrer);
