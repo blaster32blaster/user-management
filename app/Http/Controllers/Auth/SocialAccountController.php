@@ -153,9 +153,18 @@ class SocialAccountController extends Controller
                 $this->referer = $referrer;
                 return true;
             }
+//            $ref = config('acceptedoauthclients.'. $referrer)
+//                ? config('acceptedoauthclients.'. $referrer)
+//                : null;
+//
+//            if ($ref !== null) {
+//                $this->referer = $referrer;
+//                logger()->error(json_encode($this->referer));
+//                return true;
+//            }
             logger()->error(json_encode(config('acceptedoauthclients.http://evenz.online')));
             logger()->error(json_encode(config('acceptedoauthclients.' . $referrer)));
-            logger()->error(json_encode($referrer));
+            logger()->error($referrer);
             logger()->error('Client and not found');
             return false;
         }
