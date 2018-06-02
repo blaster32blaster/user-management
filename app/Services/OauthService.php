@@ -63,12 +63,12 @@ class OauthService
     public function setClientInfo()
     {
         // get the default client information
-        $this->client = config('acceptedoauthclients.clients.' . $this->referrer)
-            ? config('acceptedoauthclients.clients.' . $this->referrer)
-            : '';
-//        $this->client = config('acceptedoauthclients.'. $this->referrer)
-//            ? config('acceptedoauthclients.'. $this->referrer)
-//            : '';
+
+        $clients = config('acceptedoauthclients.clients');
+        $theClient = $clients[$this->referrer];
+        if (!empty($theClient)) {
+            $this->referrer = $theClient;
+        }
 
         //make sure that the config value is set properly
         if (empty($this->client['client_id'])) {
