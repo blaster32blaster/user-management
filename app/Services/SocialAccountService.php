@@ -8,6 +8,14 @@ use Laravel\Socialite\Contracts\User as ProviderUser;
 
 class SocialAccountService
 {
+
+    /**
+     * this is handling creating or fetching a user based on oauth provider information
+     *
+     * @param ProviderUser $providerUser
+     * @param $provider
+     * @return mixed
+     */
     public function findOrCreate(ProviderUser $providerUser, $provider)
     {
         $providerToken = $providerUser->token;

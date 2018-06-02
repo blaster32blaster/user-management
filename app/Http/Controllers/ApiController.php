@@ -2,33 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LoginRequest;
-use App\LinkedSocialAccount;
-use App\Services\OauthService;
-use App\User;
-use Carbon\Carbon;
-use function GuzzleHttp\Promise\queue;
-use HttpException;
-use HttpRequest;
-use Illuminate\Foundation\Application;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Route;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Hash;
-use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Client as HttpClient;
-use Laravel\Passport\Bridge\AccessToken;
-use Laravel\Passport\Bridge\RefreshToken;
-use Laravel\Passport\Bridge\RefreshTokenRepository;
 use Laravel\Passport\Client;
-use Laravel\Passport\Guards\TokenGuard;
-use Laravel\Passport\Http\Controllers\AccessTokenController;
-use Laravel\Passport\Http\Controllers\AuthorizationController;
-use Laravel\Passport\PassportServiceProvider;
-use Laravel\Passport\Token;
-use Laravel\Socialite\Facades\Socialite;
+use App\Services\OauthService;
+use Illuminate\Foundation\Application;
 use Psr\Http\Message\ServerRequestInterface;
+use Laravel\Passport\Http\Controllers\AccessTokenController;
 
 class ApiController extends Controller
 {
@@ -37,6 +15,11 @@ class ApiController extends Controller
      */
     public $oauthServices;
 
+    /**
+     * the app
+     *
+     * @var Application
+     */
     protected $app;
 
     /**
@@ -51,19 +34,24 @@ class ApiController extends Controller
     }
 
     /**
+     * Handle password grants
+     *
      * @param ServerRequestInterface $request
      * @return mixed
      */
     public function passwordGrantProxy(ServerRequestInterface $request)
     {
+        // set oauthservices
+        $this->oauthServices = new OauthService();
+
         // fetch the referrer, whitelisting
         $referer = $request->getServerParams()['HTTP_REFERER'];
         $args = [];
 
-        // set the default client information
-        $client = config('acceptedoauthclients.'. $referer)
-            ? config('acceptedoauthclients.'. $referer)
-            : '';
+        //set the client
+        if (!$this->oauthServices->setClientInfo()) {
+            return response(json_encode(false));
+        }
 
         // check whether we are getting a new token or refreshing
         //this signifies a refresh
@@ -87,7 +75,7 @@ class ApiController extends Controller
             $tokens = app(AccessTokenController::class)
                 ->issueToken($request->withParsedBody(array_merge(
                     $args,
-                    $client)));
+                    $this->oauthServices->client)));
 
             //parse out the body containing tokens and expiry
             $parsed = json_decode($tokens->getContent());
@@ -104,6 +92,13 @@ class ApiController extends Controller
         }
     }
 
+    /**
+     * Handle checking if a user has access to a resource
+     *
+     * @param ServerRequestInterface $request
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function authorizationProxy(ServerRequestInterface $request)
     {
         //set the OauthService
@@ -147,11 +142,7 @@ class ApiController extends Controller
         // make a request to the external oauth provider to ensure account is good
         if (!$this->oauthServices->internal) {
 
-//            return response(json_encode($this->oauthServices->makeExternalOauthRequest()));
-
             if (!$this->oauthServices->makeExternalOauthRequest()) {
-
-//                return response((json_encode($this->oauthServices->renewOauthConnection())));
 
                 if (!$this->oauthServices->renewOauthConnection()) {
                     return response(json_encode('renew'), 202);
