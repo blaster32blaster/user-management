@@ -3,45 +3,80 @@
 namespace App\Services;
 
 use App\LinkedSocialAccount;
+use Laravel\Passport\Client;
 use GuzzleHttp\Client as HttpClient;
-use App\User;
-use Illuminate\Http\Request;
-use Laravel\Socialite\Contracts\User as ProviderUser;
 use Laravel\Socialite\Facades\Socialite;
 
 class OauthService
 {
-
+    /**
+     * auth params for internal use
+     *
+     * @var $auth_params
+     */
     public $auth_params;
 
+    /**
+     * the referring application
+     *
+     * @var $referrer
+     */
     public $referrer;
 
+    /**
+     * The in use access token
+     *
+     * @var $accessToken
+     */
     public $accessToken;
 
+    /**
+     * The oauth provider
+     *
+     * @var $provider
+     */
     public $provider;
 
+    /**
+     * The oauth client, from config
+     *
+     * @var $client
+     */
     public $client;
 
+    /**
+     * The Oauth Client Model
+     *
+     * @var Client
+     */
     public $oauthClient;
 
+    /**
+     * To determine if a user is using an external oauth provider
+     *
+     * @var bool
+     */
     public $internal = true;
 
-    public $externalUser;
-
+    /**
+     * The user information found within internal sources
+     *
+     * @var $internalUser
+     */
     public $internalUser;
 
+    /**
+     * The currently found linked account model
+     *
+     * @var LinkedSocialAccount
+     */
     protected $account;
 
-    public function checkUserAccessLocal()
-    {
-
-    }
-
-    public function checkUserAccessProvider()
-    {
-
-    }
-
+    /**
+     * Set the access token for internal use
+     *
+     * @return bool
+     */
     public function setAccessToken()
     {
         if ($this->auth_params[0]) {
@@ -51,6 +86,11 @@ class OauthService
         return false;
     }
 
+    /**
+     * Set the provider
+     *
+     * @return bool
+     */
     public function setProvider()
     {
         if (!empty($this->auth_params[1]) && config('services.' .$this->auth_params[1])) {
@@ -60,6 +100,11 @@ class OauthService
         return false;
     }
 
+    /**
+     * Set the oauth provider client info from config
+     *
+     * @return bool|\Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
+     */
     public function setClientInfo()
     {
         // get the default client information
@@ -77,6 +122,12 @@ class OauthService
         return true;
     }
 
+    /**
+     * Handle internal Oauth RQ
+     *
+     * @return bool
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function makeInternalOauthRequest()
     {
         $headers = [
@@ -99,6 +150,12 @@ class OauthService
         return false;
     }
 
+    /**
+     * Handle the RQ to external oauth service
+     *
+     * @return bool
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function makeExternalOauthRequest()
     {
         $this->account = '';
@@ -111,6 +168,12 @@ class OauthService
         return $this->makeProviderRequest() ? true : false;
     }
 
+    /**
+     * Get an internal User
+     *
+     * @return null|string
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function getInternalUser()
     {
         $headers = [
@@ -135,6 +198,12 @@ class OauthService
         return null;
     }
 
+    /**
+     * Make RQ to oauth provider to ensure account access is still good
+     *
+     * @return bool
+     * @throws \Exception
+     */
     public function makeProviderRequest()
     {
         try {
@@ -155,52 +224,23 @@ class OauthService
         }
     }
 
+    /**
+     * Originally intended to handle reaquiring provider token here, now doing in front end
+     *
+     * @return bool
+     */
     public function renewOauthConnection()
     {
-//@todo : doing this in the frontend now
-return false;
-//        if (!$this->removeLinkedSocialAccount()) {
-//            return false;
-//        }
-
-
-//        @todo : working here, need to take internal request to forward to provider
-
-//        redirect()->route(config('acceptedoauthclients.thisUrl') . '/login/' . $this->provider)
-        redirect()->route('oauth-login', ['provider' => $this->provider])
-            ->with('referer', $this->referrer);
-
-//        session(['referrer' => $this->referrer]);
-//        $socialite = Socialite::driver($this->provider)->redirect();
-//        if ($socialite) {
-//            return $socialite;
-//        }
-//        return response(' Bad Referrer', 403);
-
-//        $headers = [
-//            'Accept' => 'application/json',
-//            'Callback' => config('acceptedoauthclients.thisUrl'),
-//            'Referer' => $this->referrer
-//
-//        ];
-//        ob_start();
-//        header("Location:" . config('acceptedoauthclients.thisUrl') . '/login/' . $this->provider, true);
-//        ob_end_flush();
-//        die();
-
-//        $client = new HttpClient();
-//        $url = env('APP_URL') . '/login/'. $this->provider;
-//        $response = $client
-//            ->request('GET', $url, [
-//                'headers' => $headers
-//            ])->getBody()->getContents();
-//
-//        if ($response) {
-//            return $response;
-//        }
-//        return '';
+        //@todo : doing this in the frontend now
+        return false;
     }
 
+    /**
+     * We want to remove the linked account if its no longer valid
+     *
+     * @return bool
+     * @throws \Exception
+     */
     public function removeLinkedSocialAccount()
     {
         if (isset($this->account)) {

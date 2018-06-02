@@ -11,13 +11,34 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class SocialAccountController extends Controller
 {
+    /**
+     * The headers pulled from RQ
+     *
+     * @var $headers
+     */
     protected $headers;
 
+    /**
+     * The referrer, used to set session for redirect
+     *
+     * @var string $referer
+     */
     protected $referer = '';
 
+    /**
+     * To determine if the return redirect is local or a client
+     *
+     * @var $returnEnvironment
+     */
     protected $returnEnvironment;
 
+    /**
+     * The return url
+     *
+     * @var $callback
+     */
     protected $callback;
+
     /**
      * Redirect the user to the Social authentication page.
      *
@@ -53,6 +74,8 @@ class SocialAccountController extends Controller
     }
 
     /**
+     * This will handle the callback from the oauth provider
+     *
      * @param SocialAccountService $accountService
      * @param $provider
      * @param ServerRequestInterface $req
@@ -98,8 +121,8 @@ class SocialAccountController extends Controller
      */
     public function redirectToProvider($provider)
     {
-            return Socialite::driver($provider)
-                ->redirect();
+//            return Socialite::driver($provider)
+//                ->redirect();
     }
 
     /**
@@ -111,22 +134,27 @@ class SocialAccountController extends Controller
     public function handleProviderCallback(SocialAccountService $accountService, $provider)
     {
 
-        try {
-            $user = Socialite::with($provider)->user();
-        } catch (\Exception $e) {
-            return redirect('/login');
-        }
-
-        $authUser = $accountService->findOrCreate(
-            $user,
-            $provider
-        );
-
-        auth()->login($authUser, true);
-
-        return redirect()->to('/home');
+//        try {
+//            $user = Socialite::with($provider)->user();
+//        } catch (\Exception $e) {
+//            return redirect('/login');
+//        }
+//
+//        $authUser = $accountService->findOrCreate(
+//            $user,
+//            $provider
+//        );
+//
+//        auth()->login($authUser, true);
+//
+//        return redirect()->to('/home');
     }
 
+    /**
+     * Determine the referrer status
+     *
+     * @return bool
+     */
     private function checkReferer()
     {
         // check if set
@@ -149,21 +177,6 @@ class SocialAccountController extends Controller
 
         //check accepted clients
         if ($this->returnEnvironment === 'client') {
-//            if (config('acceptedoauthclients.' . $referrer)) {
-//                $this->referer = $referrer;
-//                return true;
-//            }
-
-//            $ref = config('acceptedoauthclients.'. $referrer)
-//                ? config('acceptedoauthclients.'. $referrer)
-//                : null;
-
-//            if ($ref !== null) {
-//                $this->referer = $referrer;
-//                logger()->error(json_encode($this->referer));
-//                return true;
-//            }
-
             $clients = config('acceptedoauthclients.clients');
 
             if (in_array($referrer, $clients)) {
@@ -178,6 +191,11 @@ class SocialAccountController extends Controller
         return false;
     }
 
+    /**
+     * determine the callback status
+     *
+     * @return bool
+     */
     private function checkCallback()
     {
         //check if set
