@@ -67,7 +67,7 @@ class OauthService
         $clients = config('acceptedoauthclients.clients');
         $theClient = $clients[$this->referrer];
         if (!empty($theClient)) {
-            $this->referrer = $theClient;
+            $this->client = $theClient;
         }
 
         //make sure that the config value is set properly
