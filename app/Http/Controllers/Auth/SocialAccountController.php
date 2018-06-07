@@ -102,7 +102,8 @@ class SocialAccountController extends Controller
             $provider
         );
 
-        $createdToken = $authUser->createToken($referrer);
+        $createdToken = $authUser->createToken(json_encode($referrer));
+
         $token = $createdToken->token;
         $token->expires_at =
             Carbon::now()->addDays('1');
@@ -129,7 +130,7 @@ class SocialAccountController extends Controller
      * Obtain the user information
      * @param SocialAccountService $accountService
      * @param $provider
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @return void
      */
     public function handleProviderCallback(SocialAccountService $accountService, $provider)
     {
@@ -177,10 +178,10 @@ class SocialAccountController extends Controller
 
         //check accepted clients
         if ($this->returnEnvironment === 'client') {
-            $clients = config('acceptedoauthclients.clients');
+            $clients = (array)config('acceptedoauthclients.clients');
 
-            if (in_array($referrer, $clients)) {
-                $this->referer = $referrer;
+            if (array_key_exists($referrer, $clients)) {
+                $this->referer = $clients[$referrer]['url'];
                 return true;
             }
 
