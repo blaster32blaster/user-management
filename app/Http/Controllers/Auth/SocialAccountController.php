@@ -159,7 +159,7 @@ class SocialAccountController extends Controller
     private function checkReferer()
     {
         // check if set
-        if (!$this->headers['referer'][0] || empty($this->headers['referer'][0])) {
+        if (!isset($this->headers['referer'][0]) || empty($this->headers['referer'][0])) {
             logger()->error('Referrer Empty');
             return false;
         }

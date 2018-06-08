@@ -84,17 +84,19 @@ if (env('APP_ENV') === 'production') {
     return [
         'thisUrl' => env('APP_URL'),
         'clients' => [
-            'https://evenz.online' => [
-                'client_id' => 1,
-                'client_secret' => 'OxjUy30LQGHpsr8hsU2EXnfaqMLqZ223nWfG4P1k',
-                'grant_type' => 'password',
-                'scope' => '*'
-            ],
             'https://evenz.online/' => [
                 'client_id' => 1,
                 'client_secret' => 'OxjUy30LQGHpsr8hsU2EXnfaqMLqZ223nWfG4P1k',
                 'grant_type' => 'password',
-                'scope' => '*'
+                'scope' => '*',
+                'url' => 'https://evenz.online/'
+            ],
+            'https://evenz.online/#/' => [
+                'client_id' => 1,
+                'client_secret' => 'OxjUy30LQGHpsr8hsU2EXnfaqMLqZ223nWfG4P1k',
+                'grant_type' => 'password',
+                'scope' => '*',
+                'url' => 'https://evenz.online/'
             ]
         ],
         'self' => [
