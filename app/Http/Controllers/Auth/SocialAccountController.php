@@ -108,6 +108,10 @@ class SocialAccountController extends Controller
         $token->expires_at =
             Carbon::now()->addDays('1');
         $token->name = $provider;
+        $token->scopes = [
+            'view-public-content',
+            'view-public-client-content'
+        ];
 
         $token->save();
 

@@ -3,6 +3,11 @@
 namespace App\Services;
 
 use App\LinkedSocialAccount;
+use App\User;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Passport\Bridge\AccessToken;
+use Laravel\Passport\Bridge\RefreshToken;
+use Laravel\Passport\Bridge\RefreshTokenRepository;
 use Laravel\Passport\Client;
 use GuzzleHttp\Client as HttpClient;
 use Laravel\Socialite\Facades\Socialite;
@@ -84,6 +89,26 @@ class OauthService
             return true;
         }
         return false;
+    }
+
+    public function retireExistingTokens()
+    {
+        try {
+            $tokens = $this->internalUser->tokens;
+            foreach ($tokens as $token) {
+//                @todo : determine how to revoke refresh tokens
+                //fetch associated refresh tokens
+//                $refreshTokens = RefreshToken::where('access_token_id', $token->id)->get();
+//                foreach ($refreshTokens as $refreshToken) {
+//                    $refreshToken->delete();
+//                }
+                $token->delete();
+            }
+            return true;
+        } catch (\Exception $e) {
+            logger()->error($e);
+            return false;
+        }
     }
 
     /**
@@ -168,6 +193,13 @@ class OauthService
         return $this->makeProviderRequest() ? true : false;
     }
 
+    public function setAccessTokenInstance()
+    {
+        $this->accessToken = $this->internalUser->tokens[0];
+//        $this->accessToken = AccessToken::where('user_id', $this->internalUser->id)->first();
+        return $this->accessToken->id ?? true ?? false;
+    }
+
     /**
      * Get an internal User
      *
@@ -196,6 +228,15 @@ class OauthService
             return null;
         }
         return null;
+    }
+
+    public function setUserByEmail($username)
+    {
+        $this->internalUser = User::where('email', $username)->first();
+        if (isset($this->internalUser)) {
+            return true;
+        }
+        return false;
     }
 
     /**

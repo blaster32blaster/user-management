@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
+use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Passport\Bridge\AccessToken;
 use Laravel\Passport\Client;
 use App\Services\OauthService;
 use Illuminate\Foundation\Application;
@@ -45,7 +49,8 @@ class ApiController extends Controller
         $this->oauthServices = new OauthService();
 
         // fetch the referrer, whitelisting
-        $referer = $request->getServerParams()['HTTP_REFERER'];
+        $this->oauthServices->referrer
+            = $request->getServerParams()['HTTP_REFERER'];
         $args = [];
 
         //set the client
@@ -62,15 +67,23 @@ class ApiController extends Controller
             $client['grant_type'] = "refresh_token";
         }
 
+        $username = $request->getParsedBody()['username'];
+        $password = $request->getParsedBody()['password'];
+
         //this is for granting new access/refresh tokens
-        if (isset($request->getParsedBody()['username']) && isset($request->getParsedBody()['password'])) {
+        if (isset($username) && isset($password)) {
             $args = [
-                'username' => $request->getParsedBody()['username'],
-                'password' => $request->getParsedBody()['password']
+                'username' => $username,
+                'password' => $password
             ];
         }
 
-        try {
+//        try {
+            //set user based off of passed in email
+            $this->oauthServices->setUserByEmail($username);
+            //retire existing tokens
+            $this->oauthServices->retireExistingTokens();
+
             //fetch the tokens
             $tokens = app(AccessTokenController::class)
                 ->issueToken($request->withParsedBody(array_merge(
@@ -80,16 +93,37 @@ class ApiController extends Controller
             //parse out the body containing tokens and expiry
             $parsed = json_decode($tokens->getContent());
 
+//            @todo : need to finish out this workflow, do we need to repoint refresh token @ newly saved access token?
+
+            if ($this->oauthServices->setAccessTokenInstance()) {
+                $this->oauthServices->accessToken->name = 'internal';
+                $this->oauthServices->accessToken->save();
+                return response(json_encode($this->oauthServices->accessToken));
+            }
+
+
+
+//            $this->oauthServices->accessToken = AccessToken::where('id', $this->oauthServices->accessToken)->first();
+
+//            return response(json_encode($this->oauthServices->accessToken));
+            return response(json_encode($this->oauthServices->internalUser->token()->id));
+            $token = $this->oauthServices->internalUser->token();
+//            return response(json_encode($this->oauthServices->internalUser));
+
+            return response(json_encode($token));
+
+            //end scope testing
+
             //return just the refresh token
             return response(json_encode([
                 'refresh_token' => $parsed->refresh_token,
                 'access_token' => $parsed->access_token,
                 'token_expiry' => $parsed->expires_in]));
-        } catch (\Exception $e) {
-            return response(json_encode(
-                'Not Authorized'
-            ), 403);
-        }
+//        } catch (\Exception $e) {
+//            return response(json_encode(
+//                'Not Authorized'
+//            ), 403);
+//        }
     }
 
     /**
