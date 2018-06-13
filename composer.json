@@ -9,6 +9,7 @@
         "doctrine/dbal": "^2.7",
         "fideloper/proxy": "^4.0",
         "guzzlehttp/guzzle": "^6.3",
+        "jeremykenedy/laravel-roles": "^1.2",
         "laravel/framework": "5.6.*",
         "laravel/passport": "^5.0",
         "laravel/socialite": "^3.0",

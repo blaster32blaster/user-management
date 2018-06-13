@@ -195,9 +195,11 @@ class OauthService
 
     public function setAccessTokenInstance()
     {
-        $this->accessToken = $this->internalUser->tokens[0];
+        if (isset($this->internalUser->tokens[0])) {
+            $this->accessToken = $this->internalUser->tokens[0];
 //        $this->accessToken = AccessToken::where('user_id', $this->internalUser->id)->first();
-        return $this->accessToken->id ?? true ?? false;
+            return $this->accessToken->id ?? true ?? false;
+        }
     }
 
     /**

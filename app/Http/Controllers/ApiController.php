@@ -42,6 +42,7 @@ class ApiController extends Controller
      *
      * @param ServerRequestInterface $request
      * @return mixed
+     * @throws GuzzleException
      */
     public function passwordGrantProxy(ServerRequestInterface $request)
     {
@@ -78,7 +79,7 @@ class ApiController extends Controller
             ];
         }
 
-//        try {
+        try {
             //set user based off of passed in email
             $this->oauthServices->setUserByEmail($username);
             //retire existing tokens
@@ -93,37 +94,36 @@ class ApiController extends Controller
             //parse out the body containing tokens and expiry
             $parsed = json_decode($tokens->getContent());
 
-//            @todo : need to finish out this workflow, do we need to repoint refresh token @ newly saved access token?
+        // make internal request with the new token to associate with user for parsing
+        $this->oauthServices->accessToken = $parsed->access_token;
+        if (!$this->oauthServices->makeInternalOauthRequest()) {
+            return response(json_encode(
+                'Not Authorized'
+            ), 403);
+        }
 
-            if ($this->oauthServices->setAccessTokenInstance()) {
-                $this->oauthServices->accessToken->name = 'internal';
-                $this->oauthServices->accessToken->save();
-                return response(json_encode($this->oauthServices->accessToken));
-            }
+        // set the user instance from the returned user data
+        $this->oauthServices->internalUser = User::find($this->oauthServices->internalUser['id']);
 
+//        @todo : here or in the below block we want to get the user to update scopes via roles
+//            @todo : roles in place, needs to be built out
 
-
-//            $this->oauthServices->accessToken = AccessToken::where('id', $this->oauthServices->accessToken)->first();
-
-//            return response(json_encode($this->oauthServices->accessToken));
-            return response(json_encode($this->oauthServices->internalUser->token()->id));
-            $token = $this->oauthServices->internalUser->token();
-//            return response(json_encode($this->oauthServices->internalUser));
-
-            return response(json_encode($token));
-
-            //end scope testing
+        // set the users access token, for updating data
+        if ($this->oauthServices->setAccessTokenInstance()) {
+            $this->oauthServices->accessToken->name = 'internal';
+            $this->oauthServices->accessToken->save();
+        }
 
             //return just the refresh token
             return response(json_encode([
                 'refresh_token' => $parsed->refresh_token,
                 'access_token' => $parsed->access_token,
                 'token_expiry' => $parsed->expires_in]));
-//        } catch (\Exception $e) {
-//            return response(json_encode(
-//                'Not Authorized'
-//            ), 403);
-//        }
+        } catch (\Exception $e) {
+            return response(json_encode(
+                'Not Authorized'
+            ), 403);
+        }
     }
 
     /**
