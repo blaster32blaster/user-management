@@ -31,5 +31,18 @@ class AuthServiceProvider extends ServiceProvider
         Passport::tokensExpireIn(Carbon::now()->addMinutes(10));
 
         Passport::refreshTokensExpireIn(Carbon::now()->addHours(3));
+
+        Passport::tokensCan([
+            'manage-admins' => 'Manage Platform Administrators',
+            'manage-client-admins' => 'Manage Client Administrators',
+            'manage-users' => 'Manage Users',
+            'manage-client-users' => 'Manage Client Users',
+            'manage-access' => 'Manage Content Access',
+            'manage-client-access' => 'Manage Client Content Access',
+            'view-public-content' => 'View Public Platform Content',
+            'view-private-content' => 'View Private Platform Content',
+            'view-public-client-content' => 'View Public Client Content',
+            'view-private-client-content' => 'View Private Client Content',
+        ]);
     }
 }
