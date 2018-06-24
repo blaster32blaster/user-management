@@ -2,9 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Invitation;
+use App\Mail\NewUserRegistration;
 use App\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
@@ -31,6 +37,18 @@ class RegisterController extends Controller
     protected $redirectTo = '/home';
 
     /**
+     * The current user
+     *
+     * @var User
+     */
+    protected $user;
+
+    /**
+     * @var Invitation
+     */
+    protected $invitation;
+
+    /**
      * Create a new controller instance.
      *
      * @return void
@@ -38,6 +56,30 @@ class RegisterController extends Controller
     public function __construct()
     {
         $this->middleware('guest');
+    }
+
+    public function registration(Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        event(new Registered($user = $this->create($request->all())));
+
+        $this->guard()->login($user);
+
+        $this->user = $user;
+
+        if (!$this->createNewInvitation()) {
+            redirect()->back()
+                ->withErrors('name', 'Failed to Create Invitation');
+        }
+
+        if ($this->sendRegistrationEmail()) {
+            $this->invitation->status = 'Pending';
+            $this->invitation->save();
+        }
+
+        return $this->registered($request, $user)
+            ?: redirect($this->redirectPath());
     }
 
     /**
@@ -68,5 +110,26 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+    }
+
+    private function sendRegistrationEmail()
+    {
+       Mail::to($this->user)->send(new NewUserRegistration($this->invitation));
+
+        if( count(Mail::failures()) > 0 ) {
+            return false;
+        }
+        return true;
+    }
+
+    private function createNewInvitation()
+    {
+        $this->invitation = resolve(Invitation::class);
+
+        $this->invitation->user_id = $this->user->id;
+        $this->invitation->invite_token = $this->invitation->generateInviteToken($this->user);
+        $this->invitation->status = 'open';
+
+        return $this->invitation->save();
     }
 }
