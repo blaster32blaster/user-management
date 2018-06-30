@@ -59,7 +59,7 @@
                                 <tbody><tr>
                                     <td class="bodyContent" valign="top" mc:edit="welcomeEdit-11">
                                         <h3><strong>Complete your Registration by clicking the button below</strong></h3>
-                                        <a class="blue-btn" href="{{ $url . '?token=' . $inviteToken }}">
+                                        <a class="blue-btn" href="{{ $url . '/' . $inviteToken }}">
                                             <strong>
                                                 Complete Registration
                                             </strong>

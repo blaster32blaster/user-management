@@ -36,6 +36,8 @@ Route::get('/here', function (Request $request) {
     return 'here';
 });
 
+Route::post('/reinvite', 'InvitationController@reinvite');
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

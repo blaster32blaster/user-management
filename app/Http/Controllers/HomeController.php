@@ -27,4 +27,9 @@ class HomeController extends Controller
         $verified = Auth::user()->verified;
         return view('home')->with('verified', $verified);
     }
+
+    public function invalid()
+    {
+        return view('invalid-invite');
+    }
 }

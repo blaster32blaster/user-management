@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Invitation;
-use App\Mail\NewUserRegistration;
 use App\User;
-use Carbon\Carbon;
+use App\Invitation;
 use Illuminate\Http\Request;
+use App\Mail\NewUserRegistration;
+use App\Services\InvitationServices;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
@@ -49,6 +49,11 @@ class RegisterController extends Controller
     protected $invitation;
 
     /**
+     * @var InvitationServices
+     */
+    protected $invitationServices;
+
+    /**
      * Create a new controller instance.
      *
      * @return void
@@ -60,25 +65,30 @@ class RegisterController extends Controller
 
     public function registration(Request $request)
     {
+        $this->invitationServices = resolve(InvitationServices::class);
+
         $this->validator($request->all())->validate();
 
         event(new Registered($user = $this->create($request->all())));
 
         $this->guard()->login($user);
 
-        $this->user = $user;
+        $this->invitationServices->user = $user;
 
-        if (!$this->createNewInvitation()) {
+        if (!$this->invitationServices->createNewInvitation()) {
             redirect()->back()
                 ->withErrors('name', 'Failed to Create Invitation');
         }
 
-        if ($this->sendRegistrationEmail()) {
-            $this->invitation->status = 'Pending';
-            $this->invitation->save();
+        if (!$this->invitationServices->sendInvitationEmail()) {
+            redirect()->back()
+                ->withErrors('name', 'Failed to Send Invitation');
         }
 
-        return $this->registered($request, $user)
+        $this->invitationServices->invitation->status = 'pending';
+        $this->invitationServices->invitation->save();
+
+        return $this->registered($request, $this->invitationServices->user)
             ?: redirect($this->redirectPath());
     }
 
@@ -112,24 +122,15 @@ class RegisterController extends Controller
         ]);
     }
 
-    private function sendRegistrationEmail()
-    {
-       Mail::to($this->user)->send(new NewUserRegistration($this->invitation));
+//    private function sendRegistrationEmail()
+//    {
+//       Mail::to($this->invitationServices->user)
+//           ->send(new NewUserRegistration($this->invitationServices->invitation));
+//
+//        if( count(Mail::failures()) > 0 ) {
+//            return false;
+//        }
+//        return true;
+//    }
 
-        if( count(Mail::failures()) > 0 ) {
-            return false;
-        }
-        return true;
-    }
-
-    private function createNewInvitation()
-    {
-        $this->invitation = resolve(Invitation::class);
-
-        $this->invitation->user_id = $this->user->id;
-        $this->invitation->invite_token = $this->invitation->generateInviteToken($this->user);
-        $this->invitation->status = 'open';
-
-        return $this->invitation->save();
-    }
 }

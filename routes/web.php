@@ -36,11 +36,10 @@ $this->post('password/reset', 'Auth\ResetPasswordController@reset');
 //Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-
-//Auth::routes();
-
-//Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/invalid', 'HomeController@invalid')->name('invalid');
 
 Route::get('login/{provider}', 'Auth\SocialAccountController@redirectToProviderApi')->name('oauth-login');
 Route::get('login/{provider}/callback', 'Auth\SocialAccountController@handleProviderCallbackApi');
+
+Route::get('accept-invitation/{token}', 'InvitationController@acceptInvitation');
 
