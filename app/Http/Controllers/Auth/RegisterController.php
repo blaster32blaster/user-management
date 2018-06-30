@@ -3,8 +3,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use App\Invitation;
+use Illuminate\Http\Request;
+use App\Mail\NewUserRegistration;
+use App\Services\InvitationServices;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
@@ -31,6 +37,23 @@ class RegisterController extends Controller
     protected $redirectTo = '/home';
 
     /**
+     * The current user
+     *
+     * @var User
+     */
+    protected $user;
+
+    /**
+     * @var Invitation
+     */
+    protected $invitation;
+
+    /**
+     * @var InvitationServices
+     */
+    protected $invitationServices;
+
+    /**
      * Create a new controller instance.
      *
      * @return void
@@ -38,6 +61,35 @@ class RegisterController extends Controller
     public function __construct()
     {
         $this->middleware('guest');
+    }
+
+    public function registration(Request $request)
+    {
+        $this->invitationServices = resolve(InvitationServices::class);
+
+        $this->validator($request->all())->validate();
+
+        event(new Registered($user = $this->create($request->all())));
+
+        $this->guard()->login($user);
+
+        $this->invitationServices->user = $user;
+
+        if (!$this->invitationServices->createNewInvitation()) {
+            redirect()->back()
+                ->withErrors('name', 'Failed to Create Invitation');
+        }
+
+        if (!$this->invitationServices->sendInvitationEmail()) {
+            redirect()->back()
+                ->withErrors('name', 'Failed to Send Invitation');
+        }
+
+        $this->invitationServices->invitation->status = 'pending';
+        $this->invitationServices->invitation->save();
+
+        return $this->registered($request, $this->invitationServices->user)
+            ?: redirect($this->redirectPath());
     }
 
     /**
@@ -69,4 +121,16 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
     }
+
+//    private function sendRegistrationEmail()
+//    {
+//       Mail::to($this->invitationServices->user)
+//           ->send(new NewUserRegistration($this->invitationServices->invitation));
+//
+//        if( count(Mail::failures()) > 0 ) {
+//            return false;
+//        }
+//        return true;
+//    }
+
 }
