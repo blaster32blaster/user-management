@@ -19,33 +19,67 @@ class RolesTableSeeder extends Seeder
 	     * Add Roles
 	     *
 	     */
-    	if (Role::where('name', '=', 'Admin')->first() === null) {
+    	if (Role::where('name', '=', 'PlatformSuperAdmin')->first() === null) {
 	        $adminRole = Role::create([
-	            'name' => 'Admin',
-	            'slug' => 'admin',
-	            'description' => 'Admin Role',
+	            'name' => 'PlatformSuperAdmin',
+	            'slug' => 'platform.super.admin',
+	            'description' => 'Platform Super Administrator',
 	            'level' => 5,
         	]);
 	    }
 
-    	if (Role::where('name', '=', 'User')->first() === null) {
-	        $userRole = Role::create([
-	            'name' => 'User',
-	            'slug' => 'user',
-	            'description' => 'User Role',
-	            'level' => 1,
-	        ]);
-	    }
+        if (Role::where('name', '=', 'PlatformAdmin')->first() === null) {
+            $adminRole = Role::create([
+                'name' => 'PlatformAdmin',
+                'slug' => 'platform.admin',
+                'description' => 'Platform Administrator',
+                'level' => 4,
+            ]);
+        }
 
-    	if (Role::where('name', '=', 'Unverified')->first() === null) {
-	        $userRole = Role::create([
-	            'name' => 'Unverified',
-	            'slug' => 'unverified',
-	            'description' => 'Unverified Role',
-	            'level' => 0,
-	        ]);
-	    }
+        if (Role::where('name', '=', 'ClientAdmin')->first() === null) {
+            $adminRole = Role::create([
+                'name' => 'ClientAdmin',
+                'slug' => 'client.admin',
+                'description' => 'Client Administrator',
+                'level' => 3,
+            ]);
+        }
 
+        if (Role::where('name', '=', 'PlatformSuperUser')->first() === null) {
+            $userRole = Role::create([
+                'name' => 'PlatformSuperUser',
+                'slug' => 'platform.super.user',
+                'description' => 'Platform Super User',
+                'level' => 2,
+            ]);
+        }
+
+        if (Role::where('name', '=', 'PlatformUser')->first() === null) {
+            $userRole = Role::create([
+                'name' => 'PlatformUser',
+                'slug' => 'platform.user',
+                'description' => 'Platform User',
+                'level' => 1,
+            ]);
+        }
+
+        if (Role::where('name', '=', 'ClientSuperUser')->first() === null) {
+            $userRole = Role::create([
+                'name' => 'ClientSuperUser',
+                'slug' => 'client.super.user',
+                'description' => 'Client Super User',
+                'level' => 2,
+            ]);
+        }
+
+        if (Role::where('name', '=', 'ClientUser')->first() === null) {
+            $userRole = Role::create([
+                'name' => 'ClientUser',
+                'slug' => 'client.user',
+                'description' => 'Client User',
+                'level' => 1,
+            ]);
+        }
     }
-
 }
