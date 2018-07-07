@@ -35,7 +35,7 @@ class AuthServiceProvider extends ServiceProvider
         Passport::tokensCan([
             'manage-admins' => 'Manage Platform Administrators',
             'manage-client-admins' => 'Manage Client Administrators',
-            'manage-users' => 'Manage Users',
+            'manage-users' => 'Manage Platform Users',
             'manage-client-users' => 'Manage Client Users',
             'manage-access' => 'Manage Content Access',
             'manage-client-access' => 'Manage Client Content Access',

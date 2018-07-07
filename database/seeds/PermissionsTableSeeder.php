@@ -20,40 +20,94 @@ class PermissionsTableSeeder extends Seeder
 	     * Add Permissions
 	     *
 	     */
-        if (Permission::where('name', '=', 'Can View Users')->first() === null) {
+        if (Permission::where('name', '=', 'Manage Platform Administrators')->first() === null) {
 			Permission::create([
-			    'name' => 'Can View Users',
-			    'slug' => 'view.users',
-			    'description' => 'Can view users',
+			    'name' => 'Manage Platform Administrators',
+			    'slug' => 'manage.platform.admins',
+			    'description' => 'Can manage Platform Administrators',
 			    'model' => 'Permission',
 			]);
         }
 
-        if (Permission::where('name', '=', 'Can Create Users')->first() === null) {
+        if (Permission::where('name', '=', 'Manage Client Administrators')->first() === null) {
 			Permission::create([
-			    'name' => 'Can Create Users',
-			    'slug' => 'create.users',
-			    'description' => 'Can create new users',
+			    'name' => 'Manage Client Administrators',
+			    'slug' => 'manage.client.admins',
+			    'description' => 'Can manage client admins',
 			    'model' => 'Permission',
 			]);
         }
 
-        if (Permission::where('name', '=', 'Can Edit Users')->first() === null) {
+        if (Permission::where('name', '=', 'Manage Platform Users')->first() === null) {
 			Permission::create([
-			    'name' => 'Can Edit Users',
-			    'slug' => 'edit.users',
-			    'description' => 'Can edit users',
+			    'name' => 'Manage Platform Users',
+			    'slug' => 'manage.platform.users',
+			    'description' => 'Can manage platform users',
 			    'model' => 'Permission',
 			]);
         }
 
-        if (Permission::where('name', '=', 'Can Delete Users')->first() === null) {
+        if (Permission::where('name', '=', 'Manage Client Users')->first() === null) {
 			Permission::create([
-			    'name' => 'Can Delete Users',
-			    'slug' => 'delete.users',
-			    'description' => 'Can delete users',
+			    'name' => 'Manage Client Users',
+			    'slug' => 'manage.client.users',
+			    'description' => 'Can manage client users',
 			    'model' => 'Permission',
 			]);
+        }
+
+        if (Permission::where('name', '=', 'Manage Content Access')->first() === null) {
+            Permission::create([
+                'name' => 'Manage Content Access',
+                'slug' => 'manage.content.access',
+                'description' => 'Can Platform content access',
+                'model' => 'Permission',
+            ]);
+        }
+
+        if (Permission::where('name', '=', 'Manage Client Content Access')->first() === null) {
+            Permission::create([
+                'name' => 'Manage Client Content Access',
+                'slug' => 'manage.client.content.access',
+                'description' => 'Can manage client content and access',
+                'model' => 'Permission',
+            ]);
+        }
+
+        if (Permission::where('name', '=', 'View Public Platform Content')->first() === null) {
+            Permission::create([
+                'name' => 'View Public Platform Content',
+                'slug' => 'view.public.platform.content',
+                'description' => 'Can view content that is publically accessible on the platform',
+                'model' => 'Permission',
+            ]);
+        }
+
+        if (Permission::where('name', '=', 'View Private Platform Content')->first() === null) {
+            Permission::create([
+                'name' => 'View Private Platform Content',
+                'slug' => 'view.private.platform.content',
+                'description' => 'Can view private platform content',
+                'model' => 'Permission',
+            ]);
+        }
+
+        if (Permission::where('name', '=', 'View Public Client Content')->first() === null) {
+            Permission::create([
+                'name' => 'View Public Client Content',
+                'slug' => 'view.public.client.content',
+                'description' => 'Can view content that is publically accessible on the client',
+                'model' => 'Permission',
+            ]);
+        }
+
+        if (Permission::where('name', '=', 'View Private Client Content')->first() === null) {
+            Permission::create([
+                'name' => 'View Private Client Content',
+                'slug' => 'view.private.client.content',
+                'description' => 'Can view private client content',
+                'model' => 'Permission',
+            ]);
         }
 
     }

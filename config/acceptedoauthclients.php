@@ -26,22 +26,22 @@ if (env('APP_ENV') === 'local') {
                 'url' => 'http://localhost:8080/'
             ],
             'http://evenz.frontend/#/'  => [
-                'client_id' => 5,
-                'client_secret' => 'Nr0Kyl8p1D3stSwsSEcZFHTt7wMt9TIH6RA32Iwd',
+                'client_id' => 6,
+                'client_secret' => 'wFrRLwpnCged56YQFOeDB2nPLIe3z62L5Sp5GUYG',
                 'grant_type' => 'password',
                 'scope' => 'view-public-content view-public-client-content',
                 'url' => 'http://evenz.frontend/'
             ],
             'http://evenz.frontend/'  => [
-                'client_id' => 5,
-                'client_secret' => 'Nr0Kyl8p1D3stSwsSEcZFHTt7wMt9TIH6RA32Iwd',
+                'client_id' => 6,
+                'client_secret' => 'wFrRLwpnCged56YQFOeDB2nPLIe3z62L5Sp5GUYG',
                 'grant_type' => 'password',
                 'scope' => 'view-public-content view-public-client-content',
                 'url' => 'http://evenz.frontend/'
             ],
             'http://evenz.frontend'  => [
-                'client_id' => 5,
-                'client_secret' => 'Nr0Kyl8p1D3stSwsSEcZFHTt7wMt9TIH6RA32Iwd',
+                'client_id' => 6,
+                'client_secret' => 'wFrRLwpnCged56YQFOeDB2nPLIe3z62L5Sp5GUYG',
                 'grant_type' => 'password',
                 'scope' => 'view-public-content view-public-client-content',
                 'url' => 'http://evenz.frontend/'
@@ -86,6 +86,20 @@ if (env('APP_ENV') === 'local') {
             'client_secret' => 'OxjUy30LQGHpsr8hsU2EXnfaqMLqZ223nWfG4P1k',
             'grant_type' => 'password',
             'scope' => '*'
+        ],
+        'http://evenz.frontend/'  => [
+            'client_id' => 6,
+            'client_secret' => 'wFrRLwpnCged56YQFOeDB2nPLIe3z62L5Sp5GUYG',
+            'grant_type' => 'password',
+            'scope' => 'view-public-content view-public-client-content',
+            'url' => 'http://evenz.frontend/'
+        ],
+        'http://evenz.frontend'  => [
+            'client_id' => 6,
+            'client_secret' => 'wFrRLwpnCged56YQFOeDB2nPLIe3z62L5Sp5GUYG',
+            'grant_type' => 'password',
+            'scope' => 'view-public-content view-public-client-content',
+            'url' => 'http://evenz.frontend/'
         ],
     ];
 }
