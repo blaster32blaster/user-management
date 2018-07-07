@@ -15,7 +15,7 @@ class AttachPermissionsToRoles extends Seeder
     {
         $roles = Role::all();
 
-        $roles->each(function ($role) {
+        foreach ($roles as $role) {
            if ($role->slug === 'platform.super.admin') {
                $role->attachPermission(Permission::where('slug', 'manage.platform.admins')->first()->id);
                $role->attachPermission(Permission::where('slug', 'manage.client.admins')->first()->id);
@@ -57,6 +57,6 @@ class AttachPermissionsToRoles extends Seeder
             if ($role->slug === 'client.user') {
                 $role->attachPermission(Permission::where('slug', 'view.public.client.content')->first()->id);
             }
-        });
+        };
     }
 }
