@@ -53,6 +53,13 @@
                                 <code>{{ client.secret }}</code>
                             </td>
 
+                            <!--manage users-->
+                            <td v-if="client.admin" style="vertical-align: middle;">
+                                <a class="action-link" tabindex="-1" @click="edit(client)">
+                                    Manage Users
+                                </a>
+                            </td>
+
                             <!-- Edit Button -->
                             <td style="vertical-align: middle;">
                                 <a class="action-link" tabindex="-1" @click="edit(client)">
@@ -267,7 +274,7 @@
              * Get all of the OAuth clients for the user.
              */
             getClients() {
-                axios.get('/oauth/clients')
+                axios.get('/oauth-proxy/clients')
                         .then(response => {
                             this.clients = response.data;
                         });
@@ -285,7 +292,7 @@
              */
             store() {
                 this.persistClient(
-                    'post', '/oauth/clients',
+                    'post', '/oauth-proxy/clients',
                     this.createForm, '#modal-create-client'
                 );
             },

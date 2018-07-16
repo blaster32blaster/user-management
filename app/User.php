@@ -2,6 +2,8 @@
 
 namespace App;
 
+use jeremykenedy\LaravelRoles\Models\Permission;
+use jeremykenedy\LaravelRoles\Models\Role;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -29,7 +31,18 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function accounts(){
+    public function accounts()
+    {
         return $this->hasMany('App\LinkedSocialAccount');
+    }
+
+    public function userRoles()
+    {
+        return $this->hasMany(UserRoles::class);
+    }
+
+    public function userPermissions()
+    {
+        return $this->hasMany(UserPermissions::class);
     }
 }

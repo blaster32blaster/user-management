@@ -48341,6 +48341,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     /*
@@ -48404,7 +48411,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         getClients: function getClients() {
             var _this = this;
 
-            axios.get('/oauth/clients').then(function (response) {
+            axios.get('/oauth-proxy/clients').then(function (response) {
                 _this.clients = response.data;
             });
         },
@@ -48422,7 +48429,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
          * Create a new OAuth client for the user.
          */
         store: function store() {
-            this.persistClient('post', '/oauth/clients', this.createForm, '#modal-create-client');
+            this.persistClient('post', '/oauth-proxy/clients', this.createForm, '#modal-create-client');
         },
 
 
@@ -48563,6 +48570,32 @@ var render = function() {
                     _c("td", { staticStyle: { "vertical-align": "middle" } }, [
                       _c("code", [_vm._v(_vm._s(client.secret))])
                     ]),
+                    _vm._v(" "),
+                    client.admin
+                      ? _c(
+                          "td",
+                          { staticStyle: { "vertical-align": "middle" } },
+                          [
+                            _c(
+                              "a",
+                              {
+                                staticClass: "action-link",
+                                attrs: { tabindex: "-1" },
+                                on: {
+                                  click: function($event) {
+                                    _vm.edit(client)
+                                  }
+                                }
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                Manage Users\n                            "
+                                )
+                              ]
+                            )
+                          ]
+                        )
+                      : _vm._e(),
                     _vm._v(" "),
                     _c("td", { staticStyle: { "vertical-align": "middle" } }, [
                       _c(
