@@ -5,22 +5,22 @@ if (env('APP_ENV') === 'local') {
         'thisUrl' => env('APP_URL'),
         'clients' => [
             'http://localhost:8080/'  => [
-                'client_id' => 1,
-                'client_secret' => 'dmSsT2bsZH8kyPiLa4x8SsFuIDXbM4wK6oZwI6S7',
+                'client_id' => 21,
+                'client_secret' => 'khQxoLtR2yn07m2fqhJiQ5SlTfE1ztxD7QBRuqCj',
                 'grant_type' => 'password',
                 'scope' => 'view-public-content view-public-client-content',
                 'url' => 'http://localhost:8080/'
             ],
             'http://localhost:8080/#/'  => [
-                'client_id' => 1,
-                'client_secret' => 'dmSsT2bsZH8kyPiLa4x8SsFuIDXbM4wK6oZwI6S7',
+                'client_id' => 21,
+                'client_secret' => 'khQxoLtR2yn07m2fqhJiQ5SlTfE1ztxD7QBRuqCj',
                 'grant_type' => 'password',
                 'scope' => 'view-public-content view-public-client-content',
                 'url' => 'http://localhost:8080/'
             ],
             'http://localhost:8080'  => [
-                'client_id' => 1,
-                'client_secret' => 'dmSsT2bsZH8kyPiLa4x8SsFuIDXbM4wK6oZwI6S7',
+                'client_id' => 21,
+                'client_secret' => 'khQxoLtR2yn07m2fqhJiQ5SlTfE1ztxD7QBRuqCj',
                 'grant_type' => 'password',
                 'scope' => 'view-public-content view-public-client-content',
                 'url' => 'http://localhost:8080/'

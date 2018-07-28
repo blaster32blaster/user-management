@@ -130,6 +130,7 @@ class ApiController extends Controller
 
         // make internal request with the new token to associate with user for parsing
         $this->oauthServices->accessToken = $parsed->access_token;
+
         if (!$this->oauthServices->makeInternalOauthRequest()) {
             return response(json_encode(
                 'Not Authorized'

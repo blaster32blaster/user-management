@@ -24,6 +24,11 @@ Route::group(['prefix' => 'oauth-proxy'], function () {
 
     Route::get('login/{provider}/callback', 'Auth\SocialAccountController@handleProviderCallbackApi');
 
+    Route::group(['prefix' => 'client'], function()
+    {
+        Route::get('users/{id}', 'ClientsController@users');
+    });
+
 });
 
 Route::group(['middleware' => ['web','auth:api']], function()

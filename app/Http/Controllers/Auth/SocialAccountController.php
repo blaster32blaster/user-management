@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Services\RoleScopeService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -119,7 +120,6 @@ class SocialAccountController extends Controller
 
         // get or attach user roles
         $this->roleScopeServices->handleRoles();
-
         $createdToken = $authUser->createToken(json_encode($referrer));
 
         $token = $createdToken->token;
