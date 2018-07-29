@@ -27,12 +27,17 @@ Route::group(['prefix' => 'oauth-proxy'], function () {
     Route::group(['prefix' => 'client'], function()
     {
         Route::get('users/{id}', 'ClientsController@users');
+
+        Route::put('users/{id}', 'ClientsController@update');
+
+        Route::delete('users/{id}', 'ClientsController@destroy');
+
+        Route::get('roles/{id}', 'ClientsController@rolesList');
     });
 
 });
 
 Route::group(['middleware' => ['web','auth:api']], function()
-
 {
 
 });

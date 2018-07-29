@@ -51,8 +51,11 @@
                                 <label class="col-md-3 col-form-label">Name</label>
 
                                 <div class="col-md-9">
-                                    <input id="edit-client-name" type="text" class="form-control"
-                                           @keyup.enter="update" v-model="editForm.name">
+                                    <select id="edit-user-role" class="form-control" @keyup.enter="update" v-model="editForm.name">
+                                        <option v-for="role in possibleRoles" v-bind:value="role.name">
+                                            {{ role.name }}
+                                        </option>
+                                    </select>
                                     <span class="form-text text-muted">
                                         Change {{ editForm.user }}'s role.
                                     </span>
@@ -83,6 +86,9 @@
             },
             index: {
 
+            },
+            clientId: {
+
             }
         },
         /*
@@ -97,6 +103,7 @@
                 },
 
                 editForm: {
+                    id: '',
                     errors: [],
                     name: '',
                     redirect: ''
@@ -105,26 +112,30 @@
                 modalId: this.index + '-modal-edit-role',
                 editUsers: [],
                 theRole: this.role,
+                possibleRoles: []
             };
-        },
-        /**
-         * Prepare the component (Vue 1.x).
-         */
-        ready() {
         },
 
         /**
          * Prepare the component (Vue 2.x).
          */
         mounted() {
+            this.getRoles()
         },
 
         methods: {
+            getRoles() {
+                axios.get('/api/oauth-proxy/client/roles/' + this.clientId
+                )
+                    .then(response => {
+                        this.possibleRoles = response.data
+                    })
+            },
             /**
              * Edit the given client.
              */
             edit(role) {
-                this.editForm.id = role.role.id;
+                this.editForm.id = role.id;
                 this.editForm.user = role.user.name;
                 this.editForm.name = role.role.name;
                 let roleWithHash = '#'+ this.modalId
@@ -172,25 +183,24 @@
              * Destroy the given role.
              */
             destroy(role) {
-                axios.delete('/api/oauth-proxy/client/users/' + role.role.id)
+                axios.delete('/api/oauth-proxy/client/users/' + role.id)
                     .then(response => {
                         this.$emit('deletedRole')
                     });
             },
-            manageUsers(client, key) {
-                if (!this.editUsers[key]) {
-                    Vue.set(this.editUsers, key, false);
-                    this.makeRequest(client.id, key)
-                }
-                if (this.editUsers[key]) {
-                    Vue.set(this.editUsers, key, false);
-                }
-            },
-            checkLogs(client) {
-
-            },
+            // manageUsers(client, key) {
+            //     if (!this.editUsers[key]) {
+            //         Vue.set(this.editUsers, key, false);
+            //         this.makeRequest(client.id, key)
+            //     }
+            //     if (this.editUsers[key]) {
+            //         Vue.set(this.editUsers, key, false);
+            //     }
+            // },
+            // checkLogs(client) {
+            //
+            // },
             makeRequest(client, key) {
-                console.log(client)
                 axios.get('/api/oauth-proxy/client/users/' + client
                 )
                     .then(response => {

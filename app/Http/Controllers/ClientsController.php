@@ -6,6 +6,7 @@ use App\User;
 use App\UserRoles;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use jeremykenedy\LaravelRoles\Models\Role;
 use Laravel\Passport\Token;
 
 class ClientsController extends Controller
@@ -72,7 +73,16 @@ class ClientsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        //        @todo : need to protect this route
+        try {
+            $userRole = UserRoles::find($id);
+            $role = Role::where('name', $request->get('name'))->first();
+            $userRole->role_id = $role->id;
+            $userRole->save();
+            return response([], 202);
+        } catch (\Exception $e) {
+            return response([], 400);
+        }
     }
 
     /**
@@ -83,7 +93,8 @@ class ClientsController extends Controller
      */
     public function destroy($id)
     {
-        //
+//        @todo : need to protect this route
+        return response(json_encode(UserRoles::destroy($id)));
     }
 
     public function users(Request $request, $id)
@@ -93,5 +104,12 @@ class ClientsController extends Controller
         $users = UserRoles::with('user', 'role')->where('client_id', $id)->get();
 
         return response(json_encode($users));
+    }
+
+    public function rolesList($id)
+    {
+//        @todo : need to discriminate here based upon the user making the call
+        $roles = Role::all();
+        return $roles;
     }
 }

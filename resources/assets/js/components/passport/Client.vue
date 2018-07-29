@@ -5,7 +5,7 @@
                 <div class="col-sm-6 col-md-2">Client Id</div>
                 <div class="col-sm-6 col-md-2">Name</div>
                 <div class="col-sm-6 col-md-2">Secret</div>
-                <div class="col-sm-6 col-md-2">Redirect</div>
+                <div class="col-sm-6 col-md-2">Address</div>
                 <div class="col-sm-6 col-md-2">Password Client</div>
             </div>
         </div>
@@ -77,7 +77,13 @@
                     </div>
                 </div>
                 <div v-for="(role, index) in client.roles" style="padding:1rem;">
-                    <role v-on:persistRoles="updateRoles()" v-on:deletedRole="updateRoles()" :role="role" :index="index"></role>
+                    <role
+                            v-on:persistRoles="updateRoles()"
+                            v-on:deletedRole="updateRoles()"
+                            :role="role"
+                            :index="index"
+                            :clientId="client.id"
+                    />
                 </div>
             </div>
 
@@ -210,7 +216,7 @@
             },
 
             updateRoles() {
-                this.makeRequest(this.client, this.index)
+                this.manageUsers(this.client, this.index)
             },
 
             /**
