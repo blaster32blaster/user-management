@@ -6,7 +6,10 @@ use App\User;
 use App\UserRoles;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use jeremykenedy\LaravelRoles\Models\Role;
+use Laravel\Passport\Client;
+use Laravel\Passport\Http\Controllers\ClientController;
 use Laravel\Passport\Token;
 
 class ClientsController extends Controller
@@ -34,7 +37,7 @@ class ClientsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -45,7 +48,7 @@ class ClientsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -56,7 +59,7 @@ class ClientsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -67,8 +70,8 @@ class ClientsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -88,7 +91,7 @@ class ClientsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -111,5 +114,26 @@ class ClientsController extends Controller
 //        @todo : need to discriminate here based upon the user making the call
         $roles = Role::all();
         return $roles;
+    }
+
+    public function forUser(Request $request)
+    {
+        $userId = $request->user()->getKey();
+        $userRoles = UserRoles::where('user_id', $userId)->get();
+
+        $nonOwnedClients = [];
+
+        foreach($userRoles as $role) {
+            array_push($nonOwnedClients, (Client::find($role->client_id)));
+        }
+        $nonOwnedClients = collect(array_filter($nonOwnedClients));
+        $userClients = resolve(ClientController::class)->forUser($request);
+
+        foreach ($nonOwnedClients as $client) {
+            if (!$userClients->contains('id', $client->id)) {
+                $userClients->push($client);
+            }
+        }
+        return $userClients;
     }
 }

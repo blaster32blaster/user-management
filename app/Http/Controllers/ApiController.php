@@ -58,7 +58,8 @@ class ApiController extends Controller
                 return $user;
             });
 
-            $this->roleScopeServices->clients = app(ClientController::class)->forUser($request);
+            $this->roleScopeServices->clients
+                = app(ClientsController::class)->forUser($request);
 
             foreach ($this->roleScopeServices->clients as $client) {
                     if ($this->roleScopeServices->hasTheRole('client.admin', $client->id)) {
