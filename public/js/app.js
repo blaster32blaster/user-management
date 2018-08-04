@@ -48955,6 +48955,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: {
@@ -48980,7 +48991,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             modalId: this.index + '-modal-edit-client',
             editUsers: [],
-            roles: {}
+            roles: {},
+            newEmail: ''
         };
     },
 
@@ -49059,6 +49071,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 _this2.$emit('deletedEvent');
             });
         },
+        inviteUser: function inviteUser(client) {
+            var _this3 = this;
+
+            axios.post('/api/oauth-proxy/client/users/invite/' + client.id, {
+                'email': this.newEmail
+            }).then(function (response) {
+                _this3.$emit('invitationEvent');
+            });
+        },
         manageUsers: function manageUsers(client, key) {
             if (!this.editUsers[key]) {
                 Vue.set(this.editUsers, key, false);
@@ -49070,11 +49091,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         },
         checkLogs: function checkLogs(client) {},
         makeRequest: function makeRequest(client, key) {
-            var _this3 = this;
+            var _this4 = this;
 
             axios.get('/api/oauth-proxy/client/users/' + client).then(function (response) {
-                _this3.client.roles = response.data;
-                Vue.set(_this3.editUsers, key, true);
+                _this4.client.roles = response.data;
+                Vue.set(_this4.editUsers, key, true);
             });
         }
     }
@@ -49249,6 +49270,83 @@ var render = function() {
             "div",
             { staticClass: "active" },
             [
+              _c(
+                "div",
+                {
+                  staticClass: "flex-container row",
+                  staticStyle: {
+                    "border-bottom": ".5rem ridge gainsboro",
+                    padding: "2rem"
+                  }
+                },
+                [
+                  _c(
+                    "div",
+                    {
+                      staticClass: "col-xs-4 col-md-4",
+                      staticStyle: { "vertical-align": "middle" }
+                    },
+                    [
+                      _vm._v(
+                        "\n                    Invite New User\n                "
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass: "col-xs-6 col-md-6",
+                      staticStyle: { "vertical-align": "middle" }
+                    },
+                    [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.newEmail,
+                            expression: "newEmail"
+                          }
+                        ],
+                        attrs: { type: "text", placeholder: "Email Address" },
+                        domProps: { value: _vm.newEmail },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.newEmail = $event.target.value
+                          }
+                        }
+                      })
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass: "col-xs-2 col-md-2",
+                      staticStyle: { "vertical-align": "middle" }
+                    },
+                    [
+                      _c(
+                        "button",
+                        {
+                          attrs: { type: "button" },
+                          on: {
+                            click: function($event) {
+                              _vm.inviteUser(_vm.client)
+                            }
+                          }
+                        },
+                        [_vm._v("Send Invite")]
+                      )
+                    ]
+                  )
+                ]
+              ),
+              _vm._v(" "),
               _vm._m(1),
               _vm._v(" "),
               _vm._l(_vm.client.roles, function(role, index) {

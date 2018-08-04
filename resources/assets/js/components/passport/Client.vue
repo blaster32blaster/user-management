@@ -65,6 +65,17 @@
             </div>
         </div>
             <div class="active" v-if="editUsers[index]">
+                <div class="flex-container row" style="border-bottom: .5rem ridge gainsboro; padding: 2rem">
+                    <div class="col-xs-4 col-md-4" style="vertical-align: middle;">
+                        Invite New User
+                    </div>
+                    <div class="col-xs-6 col-md-6" style="vertical-align: middle;">
+                        <input type="text" v-model="newEmail" placeholder="Email Address"/>
+                    </div>
+                    <div class="col-xs-2 col-md-2" style="vertical-align: middle;">
+                        <button @click="inviteUser(client)" type="button">Send Invite</button>
+                    </div>
+                </div>
                 <div class="flex-container row" style="padding:1rem;">
                     <div class="col-xs-6 col-md-3" style="vertical-align: middle;">
                         Name
@@ -187,6 +198,7 @@
                 modalId: this.index + '-modal-edit-client',
                 editUsers: [],
                 roles: {},
+                newEmail: '',
             };
         },
         /**
@@ -262,6 +274,14 @@
                 axios.delete('/oauth/clients/' + client.id)
                     .then(response => {
                         this.$emit('deletedEvent')
+                    });
+            },
+            inviteUser(client) {
+                axios.post('/api/oauth-proxy/client/users/invite/' + client.id, {
+                        'email': this.newEmail
+                    })
+                    .then(response => {
+                        this.$emit('invitationEvent')
                     });
             },
             manageUsers(client, key) {

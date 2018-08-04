@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\InvitationServices;
 use App\User;
 use App\UserRoles;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,6 +15,13 @@ use Laravel\Passport\Token;
 
 class ClientsController extends Controller
 {
+    /**
+     * for holding invite services
+     *
+     * @var InvitationServices
+     */
+    public $invitationServices;
+
     /**
      * Display a listing of the resource.
      *
@@ -135,5 +143,30 @@ class ClientsController extends Controller
             }
         }
         return $userClients;
+    }
+
+    public function inviteUser(Request $request)
+    {
+        $this->invitationServices = resolve(InvitationServices::class);
+
+        // set up the user
+        $email = $request->get('email');
+        $user = new User;
+        $user->name = $email;
+        $user->email = $email;
+        $user->save();
+
+        //set up the invitation
+//        @todo: we need to set a role and a client here for the new user
+        $this->invitationServices->user = $user;
+        if ($this->invitationServices->createNewInvitation()) {
+            if ($this->invitationServices->sendInvitationEmail()) {
+                $this->invitationServices->invitation->status = 'pending';
+                $this->invitationServices->invitation->save();
+                return response('User Invited', 200);
+            }
+        }
+
+        return response('User Invitation Failed', 400);
     }
 }

@@ -32,6 +32,8 @@ Route::group(['prefix' => 'oauth-proxy'], function () {
 
         Route::delete('users/{id}', 'ClientsController@destroy');
 
+        Route::post('users/invite/{id}', 'ClientsController@inviteUser');
+
         Route::get('roles/{id}', 'ClientsController@rolesList');
     });
 
