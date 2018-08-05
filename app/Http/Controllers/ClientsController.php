@@ -23,60 +23,7 @@ class ClientsController extends Controller
     public $invitationServices;
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
+     * Update user role for a client
      *
      * @param  \Illuminate\Http\Request $request
      * @param  int $id
@@ -97,7 +44,7 @@ class ClientsController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove a client user role
      *
      * @param  int $id
      * @return \Illuminate\Http\Response
@@ -108,6 +55,13 @@ class ClientsController extends Controller
         return response(json_encode(UserRoles::destroy($id)));
     }
 
+    /**
+     * get the users for a specific client
+     *
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
+     */
     public function users(Request $request, $id)
     {
 //        1. Get users and roles for the client
@@ -117,6 +71,12 @@ class ClientsController extends Controller
         return response(json_encode($users));
     }
 
+    /**
+     * get all roles
+     *
+     * @param $id
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
     public function rolesList($id)
     {
 //        @todo : need to discriminate here based upon the user making the call
@@ -124,6 +84,12 @@ class ClientsController extends Controller
         return $roles;
     }
 
+    /**
+     * get the users clients
+     *
+     * @param Request $request
+     * @return mixed
+     */
     public function forUser(Request $request)
     {
         $userId = $request->user()->getKey();
@@ -145,6 +111,12 @@ class ClientsController extends Controller
         return $userClients;
     }
 
+    /**
+     * send a user an invitation
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
+     */
     public function inviteUser(Request $request)
     {
         $this->invitationServices = resolve(InvitationServices::class);
