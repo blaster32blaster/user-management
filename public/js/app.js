@@ -48966,6 +48966,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: {
@@ -48986,13 +49007,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             editForm: {
                 errors: [],
                 name: '',
-                redirect: ''
+                redirect: '',
+                pass: false
             },
 
             modalId: this.index + '-modal-edit-client',
             editUsers: [],
             roles: {},
-            newEmail: ''
+            newEmail: '',
+            passwordClientOptions: [true, false]
         };
     },
 
@@ -49016,6 +49039,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             this.editForm.id = client.id;
             this.editForm.name = client.name;
             this.editForm.redirect = client.redirect;
+            this.editForm.pass = client.password_client;
             var clientWithHash = '#' + this.modalId;
             console.log(clientWithHash);
 
@@ -49048,6 +49072,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
                 form.name = '';
                 form.redirect = '';
+                form.pass = false;
                 form.errors = [];
 
                 $(modal).modal('hide');
@@ -49219,50 +49244,54 @@ var render = function() {
             )
           : _vm._e(),
         _vm._v(" "),
-        _c(
-          "div",
-          {
-            staticClass: "col-sm-3",
-            staticStyle: { "vertical-align": "middle" }
-          },
-          [
-            _c(
-              "a",
+        _vm.client.admin
+          ? _c(
+              "div",
               {
-                staticClass: "action-link",
-                attrs: { tabindex: "-1" },
-                on: {
-                  click: function($event) {
-                    _vm.edit(_vm.client)
-                  }
-                }
+                staticClass: "col-sm-3",
+                staticStyle: { "vertical-align": "middle" }
               },
-              [_vm._v("\n                Edit\n            ")]
+              [
+                _c(
+                  "a",
+                  {
+                    staticClass: "action-link",
+                    attrs: { tabindex: "-1" },
+                    on: {
+                      click: function($event) {
+                        _vm.edit(_vm.client)
+                      }
+                    }
+                  },
+                  [_vm._v("\n                Edit\n            ")]
+                )
+              ]
             )
-          ]
-        ),
+          : _vm._e(),
         _vm._v(" "),
-        _c(
-          "div",
-          {
-            staticClass: "col-sm-3",
-            staticStyle: { "vertical-align": "middle" }
-          },
-          [
-            _c(
-              "a",
+        _vm.client.admin
+          ? _c(
+              "div",
               {
-                staticClass: "action-link text-danger",
-                on: {
-                  click: function($event) {
-                    _vm.destroy(_vm.client)
-                  }
-                }
+                staticClass: "col-sm-3",
+                staticStyle: { "vertical-align": "middle" }
               },
-              [_vm._v("\n                Delete\n            ")]
+              [
+                _c(
+                  "a",
+                  {
+                    staticClass: "action-link text-danger",
+                    on: {
+                      click: function($event) {
+                        _vm.destroy(_vm.client)
+                      }
+                    }
+                  },
+                  [_vm._v("\n                Delete\n            ")]
+                )
+              ]
             )
-          ]
-        )
+          : _vm._e()
       ]),
       _vm._v(" "),
       _vm.editUsers[_vm.index]
@@ -49515,6 +49544,56 @@ var render = function() {
                           "\n                                    Your application's authorization callback URL.\n                                "
                         )
                       ])
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "form-group row" }, [
+                    _c("label", { staticClass: "col-md-3 col-form-label" }, [
+                      _vm._v("Allow Password Auth")
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-9" }, [
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.editForm.pass,
+                              expression: "editForm.pass"
+                            }
+                          ],
+                          on: {
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.$set(
+                                _vm.editForm,
+                                "pass",
+                                $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              )
+                            }
+                          }
+                        },
+                        _vm._l(_vm.passwordClientOptions, function(option) {
+                          return _c("option", { domProps: { value: option } }, [
+                            _vm._v(
+                              "\n                                        " +
+                                _vm._s(option) +
+                                "\n                                    "
+                            )
+                          ])
+                        })
+                      )
                     ])
                   ])
                 ])

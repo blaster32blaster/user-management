@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\InvitationServices;
+use App\Services\RoleScopeService;
 use App\User;
 use App\UserRoles;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,6 +22,11 @@ class ClientsController extends Controller
      * @var InvitationServices
      */
     public $invitationServices;
+
+    /**
+     * @var RoleScopeService
+     */
+    public $roleScopeServices;
 
     /**
      * Update user role for a client
@@ -117,7 +123,7 @@ class ClientsController extends Controller
      * @param Request $request
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      */
-    public function inviteUser(Request $request)
+    public function inviteUser(Request $request, $id)
     {
         $this->invitationServices = resolve(InvitationServices::class);
 
@@ -135,10 +141,17 @@ class ClientsController extends Controller
             if ($this->invitationServices->sendInvitationEmail()) {
                 $this->invitationServices->invitation->status = 'pending';
                 $this->invitationServices->invitation->save();
+
+                // give user a starting role
+                $this->roleScopeServices = resolve(RoleScopeService::class);
+                $this->roleScopeServices->giveUserRole(
+                    $this->invitationServices->user,
+                    'client.user',
+                    $id
+                    );
                 return response('User Invited', 200);
             }
         }
-
         return response('User Invitation Failed', 400);
     }
 }

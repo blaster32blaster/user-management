@@ -233,4 +233,17 @@ class RoleScopeService
         $this->user->userRoles()->save($newRole);
 
     }
+
+    public function giveUserRole($user, $role, $clientId)
+    {
+        $newRole = resolve(UserRoles::class);
+        $this->user = $user;
+
+        $role = Role::where('slug', $role)->first();
+        $newRole->role_id = $role->id;
+        $newRole->user_id = $this->user->id;
+        $newRole->client_id = $clientId;
+
+        $this->user->userRoles()->save($newRole);
+    }
 }

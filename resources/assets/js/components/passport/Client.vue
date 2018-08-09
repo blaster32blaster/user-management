@@ -51,14 +51,14 @@
             </div>
 
             <!-- Edit Button -->
-            <div class="col-sm-3" style="vertical-align: middle;">
+            <div class="col-sm-3" v-if="client.admin" style="vertical-align: middle;">
                 <a class="action-link" tabindex="-1" @click="edit(client)">
                     Edit
                 </a>
             </div>
 
             <!-- Delete Button -->
-            <div class="col-sm-3" style="vertical-align: middle;">
+            <div class="col-sm-3" v-if="client.admin" style="vertical-align: middle;">
                 <a class="action-link text-danger" @click="destroy(client)">
                     Delete
                 </a>
@@ -151,6 +151,20 @@
                                     </span>
                                 </div>
                             </div>
+
+                            <!-- Password Client -->
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">Allow Password Auth</label>
+
+                                <div class="col-md-9">
+                                    <!--@todo : leaving here 8/8/18  need to ge this so that can update the password client portion-->
+                                    <select v-model="editForm.pass">
+                                        <option v-for="option in passwordClientOptions" v-bind:value="option">
+                                            {{ option }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
                         </form>
                     </div>
 
@@ -192,13 +206,15 @@
                 editForm: {
                     errors: [],
                     name: '',
-                    redirect: ''
+                    redirect: '',
+                    pass: false
                 },
 
                 modalId: this.index + '-modal-edit-client',
                 editUsers: [],
                 roles: {},
                 newEmail: '',
+                passwordClientOptions: [true, false],
             };
         },
         /**
@@ -221,6 +237,7 @@
                 this.editForm.id = client.id;
                 this.editForm.name = client.name;
                 this.editForm.redirect = client.redirect;
+                this.editForm.pass = client.password_client;
                 let clientWithHash = '#'+ this.modalId
                 console.log(clientWithHash)
 
@@ -254,6 +271,7 @@
 
                         form.name = '';
                         form.redirect = '';
+                        form.pass = false;
                         form.errors = [];
 
                         $(modal).modal('hide');
