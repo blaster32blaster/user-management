@@ -8,10 +8,13 @@ use App\User;
 use App\UserRoles;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use jeremykenedy\LaravelRoles\Models\Role;
 use Laravel\Passport\Client;
+use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Http\Controllers\ClientController;
+use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Laravel\Passport\Token;
 
 class ClientsController extends Controller
@@ -153,5 +156,28 @@ class ClientsController extends Controller
             }
         }
         return response('User Invitation Failed', 400);
+    }
+
+    public function clientUpdate(Request $request, $clientId, ClientRepository $clients, ValidationFactory $validation)
+    {
+        $client = $clients->findForUser($clientId, $request->user()->getKey());
+
+        if (! $client) {
+            return new Response('', 404);
+        }
+
+        $validation->make($request->all(), [
+            'name' => 'required|max:255',
+            'redirect' => 'required|url',
+            'pass' => 'boolean'
+        ])->validate();
+
+        $client->forceFill([
+            'name' => $request->get('name'),
+            'redirect' => $request->get('redirect'),
+            'password_client' => $request->get('pass')
+        ])->save();
+
+        return $client;
     }
 }

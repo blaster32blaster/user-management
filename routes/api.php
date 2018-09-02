@@ -35,6 +35,8 @@ Route::group(['prefix' => 'oauth-proxy'], function () {
         Route::post('users/invite/{id}', 'ClientsController@inviteUser');
 
         Route::get('roles/{id}', 'ClientsController@rolesList');
+
+        Route::put('{client_id}', 'ClientsController@clientUpdate');
     });
 
 });

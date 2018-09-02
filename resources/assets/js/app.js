@@ -6,8 +6,13 @@
  */
 
 require('./bootstrap');
+// require("https://unpkg.com/vue-toasted");
 
 window.Vue = require('vue');
+import VModal from 'vue-js-modal'
+
+Vue.use(VModal)
+// Vue.use(Toasted)
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -21,6 +26,7 @@ Vue.component('clients', require('./components/passport/Clients.vue'));
 Vue.component('client', require('./components/passport/Client.vue'));
 Vue.component('role', require('./components/passport/Role.vue'));
 Vue.component('access-tokens', require('./components/passport/PersonalAccessTokens.vue'));
+Vue.component('invitation-modal', require('./components/general/InvitationModal'));
 
 const app = new Vue({
     el: '#app'

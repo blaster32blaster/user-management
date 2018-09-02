@@ -227,12 +227,9 @@
         justify-content: left;
     }
     .active {
-        background-color: #007bff;
-        color: #ffffff;
     }
     .active a {
         padding-left: 1rem;
         padding-right: 1rem;
-        color: #ffffff;
     }
 </style>

@@ -38,7 +38,8 @@
 
             <!--manage users-->
             <div class="col-sm-3" :class="{ active :editUsers[index]}" v-if="client.admin" style="vertical-align: middle;">
-                <a class="action-link" tabindex="-1" @click="manageUsers(client, index)">
+                <!--<a class="action-link" tabindex="-1" @click="manageUsers(client, index)">-->
+                <a class="action-link" tabindex="-1" @click="manageUsers">
                     Manage Users
                 </a>
             </div>
@@ -62,41 +63,19 @@
                 <a class="action-link text-danger" @click="destroy(client)">
                     Delete
                 </a>
+                <a class="action-link text-danger" @click="show()">
+                    modal
+                </a>
             </div>
         </div>
-            <div class="active" v-if="editUsers[index]">
-                <div class="flex-container row" style="border-bottom: .5rem ridge gainsboro; padding: 2rem">
-                    <div class="col-xs-4 col-md-4" style="vertical-align: middle;">
-                        Invite New User
-                    </div>
-                    <div class="col-xs-6 col-md-6" style="vertical-align: middle;">
-                        <input type="text" v-model="newEmail" placeholder="Email Address"/>
-                    </div>
-                    <div class="col-xs-2 col-md-2" style="vertical-align: middle;">
-                        <button @click="inviteUser(client)" type="button">Send Invite</button>
-                    </div>
-                </div>
-                <div class="flex-container row" style="padding:1rem;">
-                    <div class="col-xs-6 col-md-3" style="vertical-align: middle;">
-                        Name
-                    </div>
-                    <div class="col-xs-6 col-md-3" style="vertical-align: middle;">
-                        Email
-                    </div>
-                    <div class="col-xs-6 col-md-offset-3" style="vertical-align: middle;">
-                        Role
-                    </div>
-                </div>
-                <div v-for="(role, index) in client.roles" style="padding:1rem;">
-                    <role
-                            v-on:persistRoles="updateRoles()"
-                            v-on:deletedRole="updateRoles()"
-                            :role="role"
-                            :index="index"
-                            :clientId="client.id"
-                    />
-                </div>
-            </div>
+            <!--<div class="active" v-if="editUsers[index]">-->
+        <div class="active" v-if="editUsers">
+                <invitation-modal
+                        :theClient="client"
+                        @invitationEvent="emitInvitation"
+                        @deletedRole="updateRoles()"
+                />
+        </div>
 
         <!-- Edit Client Modal -->
         <div class="modal fade" :id="modalId" tabindex="-1" role="dialog">
@@ -157,7 +136,6 @@
                                 <label class="col-md-3 col-form-label">Allow Password Auth</label>
 
                                 <div class="col-md-9">
-                                    <!--@todo : leaving here 8/8/18  need to ge this so that can update the password client portion-->
                                     <select v-model="editForm.pass">
                                         <option v-for="option in passwordClientOptions" v-bind:value="option">
                                             {{ option }}
@@ -211,9 +189,8 @@
                 },
 
                 modalId: this.index + '-modal-edit-client',
-                editUsers: [],
+                editUsers: false,
                 roles: {},
-                newEmail: '',
                 passwordClientOptions: [true, false],
             };
         },
@@ -244,17 +221,14 @@
                 $(clientWithHash).modal('show');
             },
 
-            updateRoles() {
-                this.manageUsers(this.client, this.index)
-            },
-
             /**
              * Update the client being edited.
              */
             update() {
                 let clientWithHash = '#'+ this.modalId
                 this.persistClient(
-                    'put', '/oauth/clients/' + this.editForm.id,
+                    // 'put', '/oauth/clients/' + this.editForm.id,
+                    'put', '/oauth-proxy/client/' + this.editForm.id,
                     this.editForm, clientWithHash
                 );
             },
@@ -294,22 +268,8 @@
                         this.$emit('deletedEvent')
                     });
             },
-            inviteUser(client) {
-                axios.post('/api/oauth-proxy/client/users/invite/' + client.id, {
-                        'email': this.newEmail
-                    })
-                    .then(response => {
-                        this.$emit('invitationEvent')
-                    });
-            },
-            manageUsers(client, key) {
-                if (!this.editUsers[key]) {
-                    Vue.set(this.editUsers, key, false);
-                    this.makeRequest(client.id, key)
-                }
-                if (this.editUsers[key]) {
-                    Vue.set(this.editUsers, key, false);
-                }
+            manageUsers() {
+              this.editUsers = !this.editUsers
             },
             checkLogs(client) {
 
@@ -322,11 +282,14 @@
                         Vue.set(this.editUsers, key, true);
                     })
             },
+            emitInvitation() {
+                this.$emit('invitationEvent')
+            }
         }
     }
 </script>
 
-<style>
+<style scoped>
     .flex-container {
         display: flex;
 
@@ -341,12 +304,12 @@
         justify-content: left;
     }
     .active {
-        background-color: #007bff;
-        color: #ffffff;
+        /*background-color: #007bff;*/
+        /*color: #ffffff;*/
     }
     .active a {
         padding-left: 1rem;
         padding-right: 1rem;
-        color: #ffffff;
+        /*color: #ffffff;*/
     }
 </style>
