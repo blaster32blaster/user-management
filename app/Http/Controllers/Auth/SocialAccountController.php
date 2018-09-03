@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Services\RoleScopeService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -38,6 +39,11 @@ class SocialAccountController extends Controller
      * @var $callback
      */
     protected $callback;
+
+    /**
+     * @var RoleScopeService
+     */
+    protected $roleScopeServices;
 
     /**
      * Redirect the user to the Social authentication page.
@@ -83,12 +89,18 @@ class SocialAccountController extends Controller
      */
     public function handleProviderCallbackApi(SocialAccountService $accountService, $provider, ServerRequestInterface $req)
     {
+        //set the role and scope service
+        $this->roleScopeServices = resolve(RoleScopeService::class);
+
+        //set the referrer from session
         $referrer = session('referrer');
 
+        //if not set, go home
         if (!$referrer) {
             return redirect()->to('/home');
         }
 
+        // wipe session
         session()->forget('referrer');
 
         try {
@@ -97,11 +109,17 @@ class SocialAccountController extends Controller
             return redirect($referrer);
         }
 
+        //find or create the user
         $authUser = $accountService->findOrCreate(
             $user,
             $provider
         );
 
+        //set the user on the role scope service
+        $this->roleScopeServices->user = $authUser;
+
+        // get or attach user roles
+        $this->roleScopeServices->handleRoles();
         $createdToken = $authUser->createToken(json_encode($referrer));
 
         $token = $createdToken->token;

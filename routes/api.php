@@ -24,10 +24,24 @@ Route::group(['prefix' => 'oauth-proxy'], function () {
 
     Route::get('login/{provider}/callback', 'Auth\SocialAccountController@handleProviderCallbackApi');
 
+    Route::group(['prefix' => 'client'], function()
+    {
+        Route::get('users/{id}', 'ClientsController@users');
+
+        Route::put('users/{id}', 'ClientsController@update');
+
+        Route::delete('users/{id}', 'ClientsController@destroy');
+
+        Route::post('users/invite/{id}', 'ClientsController@inviteUser');
+
+        Route::get('roles/{id}', 'ClientsController@rolesList');
+
+        Route::put('{client_id}', 'ClientsController@clientUpdate');
+    });
+
 });
 
 Route::group(['middleware' => ['web','auth:api']], function()
-
 {
 
 });

@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\RoleScopeService;
 use App\User;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Laravel\Passport\Bridge\AccessToken;
 use Laravel\Passport\Client;
 use App\Services\OauthService;
 use Illuminate\Foundation\Application;
+use Laravel\Passport\Http\Controllers\ClientController;
 use Psr\Http\Message\ServerRequestInterface;
 use Laravel\Passport\Http\Controllers\AccessTokenController;
 
@@ -27,6 +29,11 @@ class ApiController extends Controller
     protected $app;
 
     /**
+     * @var RoleScopeService
+     */
+    protected $roleScopeServices;
+
+    /**
      * Constructor
      *
      * @param Application $app        The app instance.
@@ -35,6 +42,34 @@ class ApiController extends Controller
     public function __construct(Application $app)
     {
         $this->app = $app;
+    }
+
+    public function index(Request $request)
+    {
+        $user = Auth::user();
+
+        $this->roleScopeServices = resolve(RoleScopeService::class);
+        $this->roleScopeServices->user = $user;
+
+        //add user to the request
+        if ($user) {
+            $request->merge(['user' => $user]);
+            $request->setUserResolver(function () use ($user) {
+                return $user;
+            });
+
+            $this->roleScopeServices->clients
+                = app(ClientsController::class)->forUser($request);
+
+            foreach ($this->roleScopeServices->clients as $client) {
+                    if ($this->roleScopeServices->hasTheRole('client.admin', $client->id)) {
+                        $client->admin = true;
+                    }
+            }
+        }
+
+
+        return $this->roleScopeServices->clients;
     }
 
     /**
@@ -96,6 +131,7 @@ class ApiController extends Controller
 
         // make internal request with the new token to associate with user for parsing
         $this->oauthServices->accessToken = $parsed->access_token;
+
         if (!$this->oauthServices->makeInternalOauthRequest()) {
             return response(json_encode(
                 'Not Authorized'
@@ -188,5 +224,31 @@ class ApiController extends Controller
         return response(json_encode(false));
     }
 
+    public function createClient(Request $request)
+    {
+        $user = Auth::user();
 
+        $this->roleScopeServices = resolve(RoleScopeService::class);
+        $this->roleScopeServices->user = $user;
+
+        //add user to the request
+        if ($user) {
+            $request->merge(['user' => $user]);
+            $request->setUserResolver(function () use ($user) {
+                return $user;
+            });
+
+            //hijack the store new client functionality
+            $storeResponse = app(ClientController::class)->store($request);
+
+            // if storing returns properly, give the user the client admin role
+            if ($storeResponse->id) {
+                $this->roleScopeServices->client = Client::find($storeResponse->id);
+                $this->roleScopeServices->setUserAsClientAdmin();
+
+                return $storeResponse;
+            }
+        }
+
+    }
 }

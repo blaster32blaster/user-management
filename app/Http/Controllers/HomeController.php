@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\RoleScopeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
+    /**
+     * @var RoleScopeService
+     */
+    protected $roleScopeService;
+
     /**
      * Create a new controller instance.
      *
@@ -15,6 +21,7 @@ class HomeController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->roleScopeService = new RoleScopeService();
     }
 
     /**
@@ -24,7 +31,12 @@ class HomeController extends Controller
      */
     public function index()
     {
+        // set the user on the role scope server
+        $this->roleScopeService->user = Auth::user();
+
+        // determine if user is verified
         $verified = Auth::user()->verified;
+
         return view('home')->with('verified', $verified);
     }
 

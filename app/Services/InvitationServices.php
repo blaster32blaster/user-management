@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Controllers\Auth\RoleScopeService;
 use App\Mail\NewUserRegistration;
 use App\User;
 use Carbon\Carbon;
@@ -39,6 +40,11 @@ class InvitationServices
      * @var User
      */
     public $user;
+
+    /**
+     * @var RoleScopeService
+     */
+    protected $roleScopeService;
 
     public function createNewInvitation()
     {
