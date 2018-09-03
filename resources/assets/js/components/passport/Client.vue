@@ -72,8 +72,10 @@
         <div class="active" v-if="editUsers">
                 <invitation-modal
                         :theClient="client"
+                        :index="index"
                         @invitationEvent="emitInvitation"
                         @deletedRole="updateRoles()"
+                        @closingEvent="childClosedHandler"
                 />
         </div>
 
@@ -216,7 +218,6 @@
                 this.editForm.redirect = client.redirect;
                 this.editForm.pass = client.password_client;
                 let clientWithHash = '#'+ this.modalId
-                console.log(clientWithHash)
 
                 $(clientWithHash).modal('show');
             },
@@ -284,6 +285,9 @@
             },
             emitInvitation() {
                 this.$emit('invitationEvent')
+            },
+            childClosedHandler () {
+                this.manageUsers()
             }
         }
     }

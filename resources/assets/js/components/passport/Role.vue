@@ -29,7 +29,7 @@
                             Edit Client
                         </h4>
 
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <button type="button" class="close" @click="closeModal" aria-hidden="true">&times;</button>
                     </div>
 
                     <div class="modal-body">
@@ -66,7 +66,7 @@
 
                     <!-- Modal Actions -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" @click="closeModal">Close</button>
 
                         <button type="button" class="btn btn-primary" @click="update">
                             Save Changes
@@ -79,16 +79,18 @@
 </template>
 
 <script>
+    import Toasted from 'vue-toasted';
+    Vue.use(Toasted)
+
     export default {
         props: {
             role: {
-
             },
             index: {
-
             },
             clientId: {
-
+            },
+            parentIndex: {
             }
         },
         /*
@@ -109,7 +111,7 @@
                     redirect: ''
                 },
 
-                modalId: this.index + '-modal-edit-role',
+                modalId: this.index + '-modal-edit-role' + this.parentIndex,
                 editUsers: [],
                 theRole: this.role,
                 possibleRoles: []
@@ -140,7 +142,7 @@
                 this.editForm.name = role.role.name;
                 let roleWithHash = '#'+ this.modalId
 
-                $(roleWithHash).modal('show');
+                $(roleWithHash).modal({backdrop: 'static'}, 'show');
             },
 
             /**
@@ -152,6 +154,10 @@
                     'put', '/api/oauth-proxy/client/users/' + this.editForm.id,
                     this.editForm, roleWithHash
                 );
+            },
+            closeModal () {
+                let roleWithHash = '#'+ this.modalId
+                $(roleWithHash).modal('hide');
             },
             //
             /**
@@ -169,8 +175,13 @@
                         form.errors = [];
 
                         $(modal).modal('hide');
+                        this.$toasted.success('Successfully updated User Role')
+                            .goAway(1500)
                     })
                     .catch(error => {
+                        $(modal).modal('hide');
+                        this.$toasted.error('Failed to update User Role')
+                            .goAway(1500)
                         if (typeof error.response.data === 'object') {
                             form.errors = _.flatten(_.toArray(error.response.data.errors));
                         } else {
@@ -200,14 +211,14 @@
             // checkLogs(client) {
             //
             // },
-            makeRequest(client, key) {
-                axios.get('/api/oauth-proxy/client/users/' + client
-                )
-                    .then(response => {
-                        this.client.roles = response.data
-                        Vue.set(this.editUsers, key, true);
-                    })
-            },
+            // makeRequest(client, key) {
+            //     axios.get('/api/oauth-proxy/client/users/' + client
+            //     )
+            //         .then(response => {
+            //             this.client.roles = response.data
+            //             Vue.set(this.editUsers, key, true);
+            //         })
+            // },
         }
     }
 </script>

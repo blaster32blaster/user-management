@@ -274,7 +274,6 @@ class OauthService
      */
     public function renewOauthConnection()
     {
-        //@todo : doing this in the frontend now
         return false;
     }
 
