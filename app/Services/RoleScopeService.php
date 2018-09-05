@@ -24,7 +24,7 @@ class RoleScopeService
      *
      * @var $scopes
      */
-    public $scopes;
+    public $scopes = [];
 
     /**
      * A Users Roles
@@ -80,21 +80,40 @@ class RoleScopeService
      */
     public $clients;
 
-    public function setScopes()
+    /**
+     * This is the method that were going to pass a role and use to assign the appropriate token scopes
+     *
+     * @param User $user
+     * @param $clientId
+     * @return array|\Illuminate\Config\Repository|mixed
+     */
+    public function setScopes(User $user, $clientId)
     {
-
+//        1. get roles for user and $client
+        $this->setRoles($user, $clientId);
+//        2. find the right scopes for the returned roles
+        foreach ($this->roles as $role) {
+            $this->scopes = array_merge($this->scopes, config('roleScopeLookup.' . $role->role->name));
+        }
+        return $this->scopes;
     }
 
-    public function setRoles()
+    /**
+     * Set a users roles for a client
+     *
+     * @param User $user
+     * @param $clientId
+     */
+    public function setRoles(User $user, $clientId)
     {
-
+        $this->roles = UserRoles::where('user_id', $user->id)
+            ->where('client_id', $clientId)
+            ->with('role')->get();
     }
 
-    public function setPermissions()
-    {
-
-    }
-
+    /**
+     * this seems deperecated
+     */
     public function handleRoles()
     {
         // check if user has roles already
@@ -219,7 +238,7 @@ class RoleScopeService
     }
 
     /**
-     *
+     * Set the current logged in user as the client admin, this is for client initialization
      */
     public function setUserAsClientAdmin()
     {
@@ -234,6 +253,13 @@ class RoleScopeService
 
     }
 
+    /**
+     * give a user a role for a specified client
+     *
+     * @param $user
+     * @param $role
+     * @param $clientId
+     */
     public function giveUserRole($user, $role, $clientId)
     {
         $newRole = resolve(UserRoles::class);

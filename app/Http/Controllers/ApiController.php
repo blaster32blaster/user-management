@@ -11,6 +11,7 @@ use Laravel\Passport\Client;
 use App\Services\OauthService;
 use Illuminate\Foundation\Application;
 use Laravel\Passport\Http\Controllers\ClientController;
+use Laravel\Passport\Token;
 use Psr\Http\Message\ServerRequestInterface;
 use Laravel\Passport\Http\Controllers\AccessTokenController;
 
@@ -141,12 +142,21 @@ class ApiController extends Controller
         // set the user instance from the returned user data
         $this->oauthServices->internalUser = User::find($this->oauthServices->internalUser['id']);
 
-//        @todo : here or in the below block we want to get the user to update scopes via roles
-//            @todo : roles in place, needs to be built out
+//        initialize role scope service for use in adjusting token scopes
+        $this->roleScopeServices = resolve(RoleScopeService::class);
 
-        // set the users access token, for updating data
+//           set the users access token, for updating data
         if ($this->oauthServices->setAccessTokenInstance()) {
+//            set the name of the token to signify that this is a token created by the service, rather than social
             $this->oauthServices->accessToken->name = 'internal';
+
+//            set the access token scopes, based off of the user roles
+            $this->oauthServices->accessToken->scopes =
+                $this->roleScopeServices->setScopes(
+                    $this->oauthServices->internalUser,
+                    $this->oauthServices->client['client_id']
+                );
+//            update the access token with the new data
             $this->oauthServices->accessToken->save();
         }
 
