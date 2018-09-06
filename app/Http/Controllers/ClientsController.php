@@ -40,7 +40,7 @@ class ClientsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //        @todo : need to protect this route
+//        @todo : need to protect this route
         try {
             $userRole = UserRoles::find($id);
             $role = Role::where('name', $request->get('name'))->first();
@@ -158,6 +158,15 @@ class ClientsController extends Controller
         return response('User Invitation Failed', 400);
     }
 
+    /**
+     * Override for default passport client update method
+     *
+     * @param Request $request
+     * @param $clientId
+     * @param ClientRepository $clients
+     * @param ValidationFactory $validation
+     * @return Response|Client|null
+     */
     public function clientUpdate(Request $request, $clientId, ClientRepository $clients, ValidationFactory $validation)
     {
         $client = $clients->findForUser($clientId, $request->user()->getKey());

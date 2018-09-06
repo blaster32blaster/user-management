@@ -234,6 +234,12 @@ class ApiController extends Controller
         return response(json_encode(false));
     }
 
+    /**
+     * Create new platform Oauth Client
+     *
+     * @param Request $request
+     * @return mixed
+     */
     public function createClient(Request $request)
     {
         $user = Auth::user();
@@ -241,17 +247,28 @@ class ApiController extends Controller
         $this->roleScopeServices = resolve(RoleScopeService::class);
         $this->roleScopeServices->user = $user;
 
-        //add user to the request
+//        set the url to lower
+        $request->redirect = strtolower($request->redirect);
+
+//        check to ensure that the requested client redirect does not exist already
+        $existingClients = Client::where('redirect', 'like', $request->redirect)->get();
+        if ($existingClients->count() > 0) {
+//            @todo : figure out why this is returning all janky
+            $error = ['errors' =>  "Client url already exists"];
+            return response($error, 406);
+        }
+
+//        add user to the request
         if ($user) {
             $request->merge(['user' => $user]);
             $request->setUserResolver(function () use ($user) {
                 return $user;
             });
 
-            //hijack the store new client functionality
+//        hijack the store new client functionality
             $storeResponse = app(ClientController::class)->store($request);
 
-            // if storing returns properly, give the user the client admin role
+//        if storing returns properly, give the user the client admin role
             if ($storeResponse->id) {
                 $this->roleScopeServices->client = Client::find($storeResponse->id);
                 $this->roleScopeServices->setUserAsClientAdmin();
