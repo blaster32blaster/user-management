@@ -12,3 +12,74 @@
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
+
+//this is for the individual clients
+.client-root {
+  background-color: $primary-color;
+  border-radius: 1rem;
+  //font-family: "Droid Sans";
+  //font-family: "Droid Serif";
+  //font-family: "Inconsolata", "Fira Mono", "Source Code Pro", Monaco, Consolas, "Lucida Console", monospace;
+  font-family: Raleway;
+}
+.client-name {
+  font-size: 2.5rem;
+  color: $primary-color-text;
+  text-align: center;
+}
+.client-options {
+  color: $accent-color;
+}
+.client-header {
+  //justify-content: right;
+  //width: 100%;
+  background-color: $primary-color-dark;
+  margin-left: 0;
+  margin-right: 0;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-top: 1px solid $divider-color;
+  border-bottom: 1px solid $divider-color;
+}
+.client-spacing-header {
+  //padding-top: 1rem;
+  //padding-bottom: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+  background-color: $primary-color;
+}
+.client-body {
+
+}
+.client-inset {
+  background-color: $light-background-color;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  margin-left: 2rem;
+  border: 1px solid $divider-color;
+  border-radius: .5rem;
+}
+.client-label {
+  color: $primary-text-color;
+}
+.client-value {
+  color: $secondary-text-color;
+}
+.client-button-inset {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+}
+.client-button {
+  margin-top: 2rem;
+  width: 15rem;
+  background-color: $accent-color;
+  color: $primary-text-color;
+  font-weight: bold;
+  font-size: 1.5rem;
+  border: 1px solid $divider-color;
+  border-radius: .5rem;
+  //text-shadow: 2px 2px $primary-text-color;
+}
