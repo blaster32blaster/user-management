@@ -1,73 +1,125 @@
 <template>
-    <div style="border-bottom: .5rem ridge gainsboro; margin-bottom: 2rem">
-        <div class="flex-container">
-            <div class="row client-header">
-                <div class="col-sm-6 col-md-2">Client Id</div>
-                <div class="col-sm-6 col-md-2">Name</div>
-                <div class="col-sm-6 col-md-2">Secret</div>
-                <div class="col-sm-6 col-md-2">Address</div>
-                <div class="col-sm-6 col-md-2">Password Client</div>
-            </div>
-        </div>
-        <div  class="flex-container row">
-        <!-- ID -->
-            <div class="col-xs-6 col-md-2" style="vertical-align: middle;">
-                {{ client.id }}
-            </div>
 
-            <!-- Name -->
-            <div class="col-sm-6 col-md-2" style="vertical-align: middle;">
+    <div style="margin-bottom: 2rem" class="client-root">
+        <div class="row client-spacing-header"></div>
+        <div class="row client-header">
+            <div class="col-sm-10 client-name" style="vertical-align: middle;">
                 {{ client.name }}
             </div>
-
-            <!-- Secret -->
-            <div class="col-sm-6 col-md-2" style="vertical-align: middle;">
-                <code>{{ client.secret }}</code>
-            </div>
-
-            <div class="col-sm-6 col-md-2" style="vertical-align: middle;">
-                <code>{{ client.redirect}}</code>
-            </div>
-
-            <div class="col-sm-6 col-md-2" style="vertical-align: middle;">
-                <code>{{ client.password_client }}</code>
-            </div>
-
-        </div>
-        <div  class="flex-container row">
-
-            <!--manage users-->
-            <div class="col-sm-3" :class="{ active :editUsers[index]}" v-if="client.admin" style="vertical-align: middle;">
-                <!--<a class="action-link" tabindex="-1" @click="manageUsers(client, index)">-->
-                <a class="action-link" tabindex="-1" @click="manageUsers">
-                    Manage Users
-                </a>
-            </div>
-
-            <!--check logs-->
-            <div class="col-sm-3" v-if="client.admin" style="vertical-align: middle;">
-                <a class="action-link" tabindex="-1" @click="checkLogs(client)">
-                    View Client Logs
-                </a>
-            </div>
-
-            <!-- Edit Button -->
-            <div class="col-sm-3" v-if="client.admin" style="vertical-align: middle;">
+            <div v-if="client.admin"  class="col-sm-1 col-md-1 client-options" >
                 <a class="action-link" tabindex="-1" @click="edit(client)">
-                    Edit
+                    <i class="fas fa-pen" ></i>
                 </a>
             </div>
-
-            <!-- Delete Button -->
-            <div class="col-sm-3" v-if="client.admin" style="vertical-align: middle;">
+            <div v-if="client.admin"  class="col-sm-1 col-md-1 client-options">
                 <a class="action-link text-danger" @click="destroy(client)">
-                    Delete
-                </a>
-                <a class="action-link text-danger" @click="show()">
-                    modal
+                    <i class="fas fa-times"></i>
                 </a>
             </div>
         </div>
+        <div class="row client-body">
+            <div class="col-sm-12 col-md-6">
+                <div class="client-inset">
+                    <!-- Secret -->
+                    <div class="col-sm-12" style="vertical-align: middle;">
+                        <div class="client-label">Client Secret</div>
+                        <div class="client-value">{{ client.secret }}</div>
+                    </div>
+
+                    <div class="col-sm-12" style="vertical-align: middle;">
+                        <div class="client-label">Client Url</div>
+                        <div class="client-value">{{ client.redirect }}</div>
+                    </div>
+
+                    <div class="col-sm-12" style="vertical-align: middle;">
+                        <div class="client-label">Password Access Allowed ?</div>
+                        <div class="client-value">{{ client.password_client}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6" >
+                <div class="client-button-inset">
+                    <!--manage users-->
+                    <button type="button" class="client-button" tabindex="-1" @click="manageUsers" v-if="client.admin">
+                        Manage Users
+                    </button>
+                    <button type="button" class="client-button" tabindex="-1" @click="checkLogs(client)">
+                        View Client Logs
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    <!--start whats being replaced-->
+    <!--<div style="border-bottom: .5rem ridge gainsboro; margin-bottom: 2rem">-->
+        <!--<div class="flex-container">-->
+            <!--<div class="row client-header">-->
+                <!--<div class="col-sm-6 col-md-2">Client Id</div>-->
+                <!--<div class="col-sm-6 col-md-2">Name</div>-->
+                <!--<div class="col-sm-6 col-md-2">Secret</div>-->
+                <!--<div class="col-sm-6 col-md-2">Address</div>-->
+                <!--<div class="col-sm-6 col-md-2">Password Client</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div  class="flex-container row">-->
+        <!--&lt;!&ndash; ID &ndash;&gt;-->
+            <!--<div class="col-xs-6 col-md-2" style="vertical-align: middle;">-->
+                <!--{{ client.id }}-->
+            <!--</div>-->
+
+            <!--&lt;!&ndash; Name &ndash;&gt;-->
+            <!--<div class="col-sm-6 col-md-2" style="vertical-align: middle;">-->
+                <!--{{ client.name }}-->
+            <!--</div>-->
+
+            <!--&lt;!&ndash; Secret &ndash;&gt;-->
+            <!--<div class="col-sm-6 col-md-2" style="vertical-align: middle;">-->
+                <!--<code>{{ client.secret }}</code>-->
+            <!--</div>-->
+
+            <!--<div class="col-sm-6 col-md-2" style="vertical-align: middle;">-->
+                <!--<code>{{ client.redirect}}</code>-->
+            <!--</div>-->
+
+            <!--<div class="col-sm-6 col-md-2" style="vertical-align: middle;">-->
+                <!--<code>{{ client.password_client }}</code>-->
+            <!--</div>-->
+
+        <!--</div>-->
+        <!--<div  class="flex-container row">-->
+
+            <!--&lt;!&ndash;manage users&ndash;&gt;-->
+            <!--<div class="col-sm-3" :class="{ active :editUsers[index]}" v-if="client.admin" style="vertical-align: middle;">-->
+                <!--&lt;!&ndash;<a class="action-link" tabindex="-1" @click="manageUsers(client, index)">&ndash;&gt;-->
+                <!--<a class="action-link" tabindex="-1" @click="manageUsers">-->
+                    <!--Manage Users-->
+                <!--</a>-->
+            <!--</div>-->
+
+            <!--&lt;!&ndash;check logs&ndash;&gt;-->
+            <!--<div class="col-sm-3" v-if="client.admin" style="vertical-align: middle;">-->
+                <!--<a class="action-link" tabindex="-1" @click="checkLogs(client)">-->
+                    <!--View Client Logs-->
+                <!--</a>-->
+            <!--</div>-->
+
+            <!--&lt;!&ndash; Edit Button &ndash;&gt;-->
+            <!--<div class="col-sm-3" v-if="client.admin" style="vertical-align: middle;">-->
+                <!--<a class="action-link" tabindex="-1" @click="edit(client)">-->
+                    <!--Edit-->
+                <!--</a>-->
+            <!--</div>-->
+
+            <!--&lt;!&ndash; Delete Button &ndash;&gt;-->
+            <!--<div class="col-sm-3" v-if="client.admin" style="vertical-align: middle;">-->
+                <!--<a class="action-link text-danger" @click="destroy(client)">-->
+                    <!--Delete-->
+                <!--</a>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--end whats being replaced-->
+
+
             <!--<div class="active" v-if="editUsers[index]">-->
         <div class="active" v-if="editUsers">
                 <invitation-modal
@@ -298,14 +350,11 @@
         display: flex;
 
     }
-    .client-header {
-        justify-content: left;
-        width: 100%;
-    }
+
     .row {
         flex-direction: row;
         margin-bottom: .2rem;
-        justify-content: left;
+        /*justify-content: left;*/
     }
     .active {
         /*background-color: #007bff;*/

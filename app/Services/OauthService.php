@@ -91,6 +91,11 @@ class OauthService
         return false;
     }
 
+    /**
+     * Retire tokens
+     *
+     * @return bool
+     */
     public function retireExistingTokens()
     {
         try {
@@ -180,6 +185,7 @@ class OauthService
      *
      * @return bool
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Exception
      */
     public function makeExternalOauthRequest()
     {
@@ -193,13 +199,18 @@ class OauthService
         return $this->makeProviderRequest() ? true : false;
     }
 
+    /**
+     * Set access token from internal user token
+     *
+     * @return bool
+     */
     public function setAccessTokenInstance()
     {
         if (isset($this->internalUser->tokens[0])) {
             $this->accessToken = $this->internalUser->tokens[0];
-//        $this->accessToken = AccessToken::where('user_id', $this->internalUser->id)->first();
             return $this->accessToken->id ?? true ?? false;
         }
+        return false;
     }
 
     /**
@@ -232,6 +243,12 @@ class OauthService
         return null;
     }
 
+    /**
+     * set internal user by email
+     *
+     * @param $username
+     * @return bool
+     */
     public function setUserByEmail($username)
     {
         $this->internalUser = User::where('email', $username)->first();

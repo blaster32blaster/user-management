@@ -49827,7 +49827,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\n.flex-container[data-v-f3e01b24] {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n}\n.client-header[data-v-f3e01b24] {\n    -webkit-box-pack: left;\n        -ms-flex-pack: left;\n            justify-content: left;\n    width: 100%;\n}\n.row[data-v-f3e01b24] {\n    -webkit-box-orient: horizontal;\n    -webkit-box-direction: normal;\n        -ms-flex-direction: row;\n            flex-direction: row;\n    margin-bottom: .2rem;\n    -webkit-box-pack: left;\n        -ms-flex-pack: left;\n            justify-content: left;\n}\n.active[data-v-f3e01b24] {\n    /*background-color: #007bff;*/\n    /*color: #ffffff;*/\n}\n.active a[data-v-f3e01b24] {\n    padding-left: 1rem;\n    padding-right: 1rem;\n    /*color: #ffffff;*/\n}\n", ""]);
+exports.push([module.i, "\n.flex-container[data-v-f3e01b24] {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n}\n.row[data-v-f3e01b24] {\n    -webkit-box-orient: horizontal;\n    -webkit-box-direction: normal;\n        -ms-flex-direction: row;\n            flex-direction: row;\n    margin-bottom: .2rem;\n    /*justify-content: left;*/\n}\n.active[data-v-f3e01b24] {\n    /*background-color: #007bff;*/\n    /*color: #ffffff;*/\n}\n.active a[data-v-f3e01b24] {\n    padding-left: 1rem;\n    padding-right: 1rem;\n    /*color: #ffffff;*/\n}\n", ""]);
 
 // exports
 
@@ -49840,6 +49840,58 @@ exports.push([module.i, "\n.flex-container[data-v-f3e01b24] {\n    display: -web
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -50141,171 +50193,149 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    {
-      staticStyle: {
-        "border-bottom": ".5rem ridge gainsboro",
-        "margin-bottom": "2rem"
-      }
-    },
+    { staticClass: "client-root", staticStyle: { "margin-bottom": "2rem" } },
     [
-      _vm._m(0),
+      _c("div", { staticClass: "row client-spacing-header" }),
       _vm._v(" "),
-      _c("div", { staticClass: "flex-container row" }, [
+      _c("div", { staticClass: "row client-header" }, [
         _c(
           "div",
           {
-            staticClass: "col-xs-6 col-md-2",
-            staticStyle: { "vertical-align": "middle" }
-          },
-          [_vm._v("\n            " + _vm._s(_vm.client.id) + "\n        ")]
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          {
-            staticClass: "col-sm-6 col-md-2",
+            staticClass: "col-sm-10 client-name",
             staticStyle: { "vertical-align": "middle" }
           },
           [_vm._v("\n            " + _vm._s(_vm.client.name) + "\n        ")]
         ),
         _vm._v(" "),
-        _c(
-          "div",
-          {
-            staticClass: "col-sm-6 col-md-2",
-            staticStyle: { "vertical-align": "middle" }
-          },
-          [_c("code", [_vm._v(_vm._s(_vm.client.secret))])]
-        ),
+        _vm.client.admin
+          ? _c("div", { staticClass: "col-sm-1 col-md-1 client-options" }, [
+              _c(
+                "a",
+                {
+                  staticClass: "action-link",
+                  attrs: { tabindex: "-1" },
+                  on: {
+                    click: function($event) {
+                      _vm.edit(_vm.client)
+                    }
+                  }
+                },
+                [_c("i", { staticClass: "fas fa-pen" })]
+              )
+            ])
+          : _vm._e(),
         _vm._v(" "),
-        _c(
-          "div",
-          {
-            staticClass: "col-sm-6 col-md-2",
-            staticStyle: { "vertical-align": "middle" }
-          },
-          [_c("code", [_vm._v(_vm._s(_vm.client.redirect))])]
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          {
-            staticClass: "col-sm-6 col-md-2",
-            staticStyle: { "vertical-align": "middle" }
-          },
-          [_c("code", [_vm._v(_vm._s(_vm.client.password_client))])]
-        )
+        _vm.client.admin
+          ? _c("div", { staticClass: "col-sm-1 col-md-1 client-options" }, [
+              _c(
+                "a",
+                {
+                  staticClass: "action-link text-danger",
+                  on: {
+                    click: function($event) {
+                      _vm.destroy(_vm.client)
+                    }
+                  }
+                },
+                [_c("i", { staticClass: "fas fa-times" })]
+              )
+            ])
+          : _vm._e()
       ]),
       _vm._v(" "),
-      _c("div", { staticClass: "flex-container row" }, [
-        _vm.client.admin
-          ? _c(
+      _c("div", { staticClass: "row client-body" }, [
+        _c("div", { staticClass: "col-sm-12 col-md-6" }, [
+          _c("div", { staticClass: "client-inset" }, [
+            _c(
               "div",
               {
-                staticClass: "col-sm-3",
-                class: { active: _vm.editUsers[_vm.index] },
+                staticClass: "col-sm-12",
                 staticStyle: { "vertical-align": "middle" }
               },
               [
-                _c(
-                  "a",
+                _c("div", { staticClass: "client-label" }, [
+                  _vm._v("Client Secret")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "client-value" }, [
+                  _vm._v(_vm._s(_vm.client.secret))
+                ])
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                staticClass: "col-sm-12",
+                staticStyle: { "vertical-align": "middle" }
+              },
+              [
+                _c("div", { staticClass: "client-label" }, [
+                  _vm._v("Client Url")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "client-value" }, [
+                  _vm._v(_vm._s(_vm.client.redirect))
+                ])
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                staticClass: "col-sm-12",
+                staticStyle: { "vertical-align": "middle" }
+              },
+              [
+                _c("div", { staticClass: "client-label" }, [
+                  _vm._v("Password Access Allowed ?")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "client-value" }, [
+                  _vm._v(_vm._s(_vm.client.password_client))
+                ])
+              ]
+            )
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-sm-12 col-md-6" }, [
+          _c("div", { staticClass: "client-button-inset" }, [
+            _vm.client.admin
+              ? _c(
+                  "button",
                   {
-                    staticClass: "action-link",
-                    attrs: { tabindex: "-1" },
+                    staticClass: "client-button",
+                    attrs: { type: "button", tabindex: "-1" },
                     on: { click: _vm.manageUsers }
                   },
-                  [_vm._v("\n                Manage Users\n            ")]
+                  [
+                    _vm._v(
+                      "\n                    Manage Users\n                "
+                    )
+                  ]
                 )
-              ]
-            )
-          : _vm._e(),
-        _vm._v(" "),
-        _vm.client.admin
-          ? _c(
-              "div",
+              : _vm._e(),
+            _vm._v(" "),
+            _c(
+              "button",
               {
-                staticClass: "col-sm-3",
-                staticStyle: { "vertical-align": "middle" }
+                staticClass: "client-button",
+                attrs: { type: "button", tabindex: "-1" },
+                on: {
+                  click: function($event) {
+                    _vm.checkLogs(_vm.client)
+                  }
+                }
               },
               [
-                _c(
-                  "a",
-                  {
-                    staticClass: "action-link",
-                    attrs: { tabindex: "-1" },
-                    on: {
-                      click: function($event) {
-                        _vm.checkLogs(_vm.client)
-                      }
-                    }
-                  },
-                  [_vm._v("\n                View Client Logs\n            ")]
+                _vm._v(
+                  "\n                    View Client Logs\n                "
                 )
               ]
             )
-          : _vm._e(),
-        _vm._v(" "),
-        _vm.client.admin
-          ? _c(
-              "div",
-              {
-                staticClass: "col-sm-3",
-                staticStyle: { "vertical-align": "middle" }
-              },
-              [
-                _c(
-                  "a",
-                  {
-                    staticClass: "action-link",
-                    attrs: { tabindex: "-1" },
-                    on: {
-                      click: function($event) {
-                        _vm.edit(_vm.client)
-                      }
-                    }
-                  },
-                  [_vm._v("\n                Edit\n            ")]
-                )
-              ]
-            )
-          : _vm._e(),
-        _vm._v(" "),
-        _vm.client.admin
-          ? _c(
-              "div",
-              {
-                staticClass: "col-sm-3",
-                staticStyle: { "vertical-align": "middle" }
-              },
-              [
-                _c(
-                  "a",
-                  {
-                    staticClass: "action-link text-danger",
-                    on: {
-                      click: function($event) {
-                        _vm.destroy(_vm.client)
-                      }
-                    }
-                  },
-                  [_vm._v("\n                Delete\n            ")]
-                ),
-                _vm._v(" "),
-                _c(
-                  "a",
-                  {
-                    staticClass: "action-link text-danger",
-                    on: {
-                      click: function($event) {
-                        _vm.show()
-                      }
-                    }
-                  },
-                  [_vm._v("\n                modal\n            ")]
-                )
-              ]
-            )
-          : _vm._e()
+          ])
+        ])
       ]),
       _vm._v(" "),
       _vm.editUsers
@@ -50337,12 +50367,12 @@ var render = function() {
         [
           _c("div", { staticClass: "modal-dialog" }, [
             _c("div", { staticClass: "modal-content" }, [
-              _vm._m(1),
+              _vm._m(0),
               _vm._v(" "),
               _c("div", { staticClass: "modal-body" }, [
                 _vm.editForm.errors.length > 0
                   ? _c("div", { staticClass: "alert alert-danger" }, [
-                      _vm._m(2),
+                      _vm._m(1),
                       _vm._v(" "),
                       _c("br"),
                       _vm._v(" "),
@@ -50552,26 +50582,6 @@ var render = function() {
   )
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "flex-container" }, [
-      _c("div", { staticClass: "row client-header" }, [
-        _c("div", { staticClass: "col-sm-6 col-md-2" }, [_vm._v("Client Id")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "col-sm-6 col-md-2" }, [_vm._v("Name")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "col-sm-6 col-md-2" }, [_vm._v("Secret")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "col-sm-6 col-md-2" }, [_vm._v("Address")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "col-sm-6 col-md-2" }, [
-          _vm._v("Password Client")
-        ])
-      ])
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement

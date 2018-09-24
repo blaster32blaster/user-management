@@ -4,10 +4,10 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
-            <div class="card">
+            {{--<div class="card">--}}
 
                 @if($verified === 1)
-                    <div class="card-header">Dashboard</div>
+                    {{--<div class="card-header">Dashboard</div>--}}
                     <div id="here" class="card-body">
                         <auth-clients></auth-clients>
                         <clients></clients>
@@ -28,7 +28,7 @@
                         </p>
                     </div>
                 @endif
-            </div>
+            {{--</div>--}}
         </div>
     </div>
 </div>

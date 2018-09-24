@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Services\OauthService;
 use App\Services\RoleScopeService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -44,6 +45,11 @@ class SocialAccountController extends Controller
      * @var RoleScopeService
      */
     protected $roleScopeServices;
+
+    /**
+     * @var OauthService
+     */
+    protected $oauthServices;
 
     /**
      * Redirect the user to the Social authentication page.
@@ -89,15 +95,21 @@ class SocialAccountController extends Controller
      */
     public function handleProviderCallbackApi(SocialAccountService $accountService, $provider, ServerRequestInterface $req)
     {
-        //set the role and scope service
+        //set the role and scope service and oauth services
         $this->roleScopeServices = resolve(RoleScopeService::class);
+        $this->oauthServices = resolve(OauthService::class);
 
         //set the referrer from session
-        $referrer = session('referrer');
+        $this->oauthServices->referrer = session('referrer');
 
         //if not set, go home
-        if (!$referrer) {
+        if (!$this->oauthServices->referrer) {
             return redirect()->to('/home');
+        }
+
+//        now check to ensure that there is config data for the provided referrer
+        if (!$this->oauthServices->setClientInfo()) {
+            return redirect($this->oauthServices->referrer);
         }
 
         // wipe session
@@ -106,7 +118,7 @@ class SocialAccountController extends Controller
         try {
             $user = Socialite::with($provider)->user();
         } catch (\Exception $e) {
-            return redirect($referrer);
+            return redirect($this->oauthServices->referrer);
         }
 
         //find or create the user
@@ -120,57 +132,26 @@ class SocialAccountController extends Controller
 
         // get or attach user roles
         $this->roleScopeServices->handleRoles();
-        $createdToken = $authUser->createToken(json_encode($referrer));
+        $createdToken = $authUser->createToken(json_encode($this->oauthServices->referrer));
 
+//        adjust token expiry and name to match the social provider
         $token = $createdToken->token;
         $token->expires_at =
             Carbon::now()->addDays('1');
         $token->name = $provider;
-        $token->scopes = [
-            'view-public-content',
-            'view-public-client-content'
-        ];
+
+//            set the access token scopes, based off of the user roles
+        $token->scopes =
+            $this->roleScopeServices->setScopes(
+                $authUser,
+                $this->oauthServices->client['client_id']
+            );
 
         $token->save();
 
-        return redirect($referrer .
+        return redirect($this->oauthServices->referrer .
             '?access_token=' . $createdToken->accessToken .
             '&provider=' . $provider);
-    }
-
-    /**
-     * @param $provider
-     * @return mixed
-     */
-    public function redirectToProvider($provider)
-    {
-//            return Socialite::driver($provider)
-//                ->redirect();
-    }
-
-    /**
-     * Obtain the user information
-     * @param SocialAccountService $accountService
-     * @param $provider
-     * @return void
-     */
-    public function handleProviderCallback(SocialAccountService $accountService, $provider)
-    {
-
-//        try {
-//            $user = Socialite::with($provider)->user();
-//        } catch (\Exception $e) {
-//            return redirect('/login');
-//        }
-//
-//        $authUser = $accountService->findOrCreate(
-//            $user,
-//            $provider
-//        );
-//
-//        auth()->login($authUser, true);
-//
-//        return redirect()->to('/home');
     }
 
     /**

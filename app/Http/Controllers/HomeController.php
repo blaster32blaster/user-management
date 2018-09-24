@@ -40,6 +40,11 @@ class HomeController extends Controller
         return view('home')->with('verified', $verified);
     }
 
+    /**
+     * route for an invalid invite
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function invalid()
     {
         return view('invalid-invite');
